@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction logs</title>
+    <link rel="icon" type="image/x-icon" href="pics/ESGUI-Coin.png">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="1.21_renderchest/1.21_renderchest/rc-minecraft-64.css">
+    <style>
+        body {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            margin: 0%;
+            font-family: Arial, sans-serif;
+        }
+
+        /*
+        .logs-container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-container {
+            width: 95%;
+            //height: fit-content;
+            min-height: 40px;
+            margin: 20px;
+            padding: 20px 10px;
+            background-color: #e8e8e8;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-content-top {
+            display: grid;
+            grid-template-areas: "u . q . a . t";
+            grid-gap: 10px 20px;
+            margin-bottom: 20px;
+        }
+
+        .log-content-bottom {
+            display: grid;
+            grid-template-areas: ". i . . . p .";
+            grid-gap: 10px 20px;
+        }
+
+        .log-item-user {
+            grid-area: u;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .log-item-items {
+            grid-area: i;
+            text-align: center;
+        }
+
+        .log-item-prices {
+            grid-area: p;
+            text-align: center;
+        }
+        
+        .log-item-quantity {
+            grid-area: q;
+            text-align: center;
+        }
+
+        .log-item-action {
+            grid-area: a;
+            text-align: center;
+        }
+
+        .log-item-type {
+            grid-area: t;
+            text-align: center;
+        }
+
+        .log-gap {
+            grid-area: g;
+            background-color: yellow;
+        }
+
+        */
+
+        .logs-container {
+            width: 95%;
+            height: 95%;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-container {
+            width: 95%;
+            height: 20px;
+            margin: 20px;
+            padding: 5px 10px;
+            background-color: #e8e8e8;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-item-user {
+            white-space: nowrap;
+            display: flex;
+        }
+
+        .log-item-items {
+            display: flex;
+        }
+
+        .log-content {
+            display: grid;
+            grid-template-columns: 15% 10% 10% 15% 25% 25%;
+        }
+
+        .log-guide {
+            margin: 20px;
+            display: grid;
+            grid-template-columns: 15% 10% 10% 15% 25% 25%;
+            /*grid-template-columns: repeat(6, auto);*/
+            margin-bottom: 20px;
+        }
+
+        .log-guide-item {
+            text-align: left;
+        }
+
+        .icon-frame {
+            height: 20px;
+            width: 20px;
+            /*
+            overflow: hidden;
+            border-radius: 50%;
+             // Minecraft doesn't have circles
+             */
+        }
+
+        .loader-frame {
+            padding: 50px;
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3;
+            /* Light grey */
+            border-top: 8px solid #3498db;
+            /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin-right: auto;
+            margin-left: auto;
+            position: relative;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="nav-logo">
+                <img src="pics/Logo_GP5.0 no background.png" alt="..." height="64">
+            </div>
+            <div class="nav-title">
+                Transaction Logs
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a class="nav-item active" href="#home">Logs</a>
+                </li>
+                <li>
+                    <a class="nav-item" href="#contact">Discord</a>
+                </li>
+                <li>
+                    <a class="nav-item" href="#about">Github</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="logs-container" id="logs">
+        <div class="log-guide">
+            <div class="log-guide-item">Player</div>
+            <div class="log-guide-item">Amount</div>
+            <div class="log-guide-item">Action</div>
+            <div class="log-guide-item">Method</div>
+            <div class="log-guide-item">Item(s)</div>
+            <div class="log-guide-item">Price(s)</div>
+        </div>
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>
