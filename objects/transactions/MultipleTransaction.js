@@ -42,7 +42,8 @@ export class MultipleTransaction {
         var msg = '';
         var i = 0;
         for (var item of this.items) {
-            msg += item.amount + 'x <a title=' + item.item + '>' + item.name + '</a>';
+            msg += '<div class="rc-item rc-minecraft_' + (item.mat == undefined ? 'unknown' : item.mat.toLowerCase()) + '" title="' + item.mat + '" style="vertical-align: top; display: inline-block; width: 20px; height: 20px"></div>&nbsp;<div style="display: inline-block; vertical-align: top;" title=' + item.item + '>' + item.amount + 'x&nbsp;' + item.name + '</div>';
+            //msg += item.amount + 'x <a title=' + item.item + '>' + item.name + '</a>';
 
             if (i != this.items.length-1) msg += ", ";
             i++;
@@ -57,7 +58,9 @@ export class MultipleTransaction {
         var msg = '';
         var i = 0;
         for (var price of this.prices) {
-            msg += '<a title=' + price.ecoType + '>' + price.formatted + '</a>';
+            msg += '<div style="display: inline-block;" title="' + price.ecoType.replace(/"/g, '&quot;') + '">' + price.formatted + '</div>';
+
+            console.log('<a title="' + price.ecoType.replace('\"', '\\"') + '">' + price.formatted + '</a>');
 
             if (i != this.prices.length-1) msg += ", ";
             i++;

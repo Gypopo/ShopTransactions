@@ -40,7 +40,8 @@ export class SingleTransaction {
      * @returns {string}
      */
     getItems() {
-        return '<div class="rc-item rc-minecraft_' + this.item.mat.toLowerCase() + '" style="width: 20px; height: 20px"></div>' + this.amount + 'x <a title=' + this.item.item + '>' + this.item.name + '</a>';
+        console.log(this.item.mat);
+        return '<div class="rc-item rc-minecraft_' + (this.item.mat == undefined ? 'unknown' : this.item.mat.toLowerCase()) + '" title="' + this.item.mat + '" style="display: inline-block; vertical-align: top; width: 20px; height: 20px"></div>&nbsp;<div style="display: inline-block; vertical-align: top;" title=' + this.item.item + '>' + this.amount + 'x&nbsp;' + this.item.name + '</div>';
     }
 
 
@@ -51,7 +52,7 @@ export class SingleTransaction {
         var msg = '';
         var i = 0;
         for (var price of this.prices) {
-            msg += '<a title=' + price.ecoType + '>' + price.formatted + '</a>';
+            msg += '<div style="display: inline-block;" title="' + price.ecoType.replace(/"/g, '&quot;') + '">' + price.formatted + '</a>';
 
             if (i != this.prices.length-1) msg += ", ";
             i++;
