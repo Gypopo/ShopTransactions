@@ -4,10 +4,13 @@ import { TransactionMode } from "./objects/TransactionMode.js";
 import { TransactionType } from "./objects/TransactionType.js";
 import { MultipleTransaction } from "./objects/transactions/MultipleTransaction.js";
 import { SingleTransaction } from "./objects/transactions/SingleTransaction.js";
+import { Nav } from "./nav.js";
 
 var pages = document.getElementById('logs');
 var api = new API();
+var nav = new Nav();
 var logs = new Logs();
+var cached_textures = new Map();
 
 init();
 
@@ -17,10 +20,14 @@ async function init() {
     var params = new URLSearchParams(window.location.search);
     if (params.has("id")) {
         try {
-            await api.getLogs(params.get('id')).then(v => {
-                logs.init(v);
-                completeLoading();
-            });
+            var rawLogs;
+            if (sessionStorage.getItem('logs')) {
+                rawLogs = sessionStorage.getItem('logs');
+            } else {
+                rawLogs = await api.getExported(params.get('id'));
+            }
+            logs.init(JSON.parse(rawLogs, customReviver));
+            completeLoading();
         } catch (e) {
             if (e.name === 'AbortError') {
                 alert('A timeout exception occured while trying to reach the backend server, please report this issue to: https://discord.gpplugins.com');
@@ -60,6 +67,36 @@ async function completeLoading() {
     }
 
 }
+
+function customReviver(key, value) {
+    if (typeof value === 'object' && value !== null) {
+      // Check if the object has specific keys to determine if it needs to be converted to a CustomObject
+      if ('date' in value && 'player' in value && 'prices' in value && 'amount' in value && 'action' in value && 'type' in value) {
+        if (Array.isArray(value.items)) {
+          return new MultipleTransaction(
+            value.date,
+            new Player(value.player.name, value.player.uuid),
+            value.items.map(item => new MultipleItem(item.amount, item.name, item.item, item.mat)),
+            value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
+            value.amount,
+            value.action,
+            value.type
+          );
+        } else {
+          return new SingleTransaction(
+            value.date,
+            new Player(value.player.name, value.player.uuid),
+            new SingleItem(value.items.name, value.items.item, value.items.mat),
+            value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
+            value.amount,
+            value.action,
+            value.type
+          );
+        }
+      }
+    }
+    return value;
+  }
 
 /**
  * @param {Number} i
@@ -167,6 +204,10 @@ function createLog(log) {
     container.className = 'log-container';
     //container.id = 'page' + i;
 
+    var contentTop = document.createElement('div');
+    contentTop.className = 'log-content';
+
+    // Player avatar
     var avatarFrame = document.createElement('div');
     avatarFrame.className = 'icon-frame';
 
@@ -175,64 +216,75 @@ function createLog(log) {
     avatar.src = 'https://api.creepernation.net/avatar/' + log.player.uuid;
     avatarFrame.appendChild(avatar);
 
-    var column = '<div class="log-item"></div>';
-
-    var contentTop = document.createElement('div');
-    contentTop.className = 'log-content';
-
+    // Transaction owner
+    var userItem = document.createElement('div');
+    userItem.className = 'log-item';
     var userObj = document.createElement('div');
-    userObj.className = 'log-item-user';
-    var pName = document.createElement('div');
-    pName.innerHTML = " " + log.player.name;
-
+    userObj.className = 'log-text log-item-user';
     userObj.appendChild(avatarFrame);
-    userObj.appendChild(pName);
+    userObj.innerHTML = userObj.innerHTML + '&nbsp;' + log.player.name;
+    userItem.appendChild(userObj);
 
+    // Transaction Amount
+    var quantityItem = document.createElement('div');
+    quantityItem.className = 'log-item';
     var quantityObj = document.createElement('div');
-    quantityObj.className = 'log-item-quantity';
+    quantityObj.className = 'log-text log-item-quantity';
     quantityObj.innerHTML = log.amount;
+    quantityItem.appendChild(quantityObj);
 
+    // Transaction type
+    var actionItem = document.createElement('div');
+    actionItem.className = 'log-item';
     var actionObj = document.createElement('div');
-    actionObj.className = 'log-item-action';
+    actionObj.className = 'log-text log-item-action';
     actionObj.innerHTML = log.action;
+    actionItem.appendChild(actionObj);
 
+    // Transaction Type
+    var typeItem = document.createElement('div');
+    typeItem.className = 'log-item';
     var typeObj = document.createElement('div');
-    typeObj.className = 'log-item-type';
+    typeObj.className = 'log-text log-item-type';
     typeObj.innerHTML = log.type;
+    typeItem.appendChild(typeObj);
 
+    // Transaction item(s)
+    var itemsItem = document.createElement('div');
+    itemsItem.className = 'log-item';
     var itemsObj = document.createElement('div');
-    itemsObj.className = 'log-item-items';
+    itemsObj.className = 'log-text log-item-items';
     itemsObj.innerHTML = log.getItems();
+    itemsItem.appendChild(itemsObj);
 
+    // Transaction price(s)
+    var pricesItem = document.createElement('div');
+    pricesItem.className = 'log-item';
     var pricesObj = document.createElement('div');
-    pricesObj.className = 'log-item-prices';
+    pricesObj.className = 'log-text log-item-prices';
     pricesObj.innerHTML = log.getPrices();
+    pricesItem.appendChild(pricesObj);
 
+    contentTop.appendChild(userItem);
+    contentTop.appendChild(quantityItem);
+    contentTop.appendChild(actionItem);
+    contentTop.appendChild(typeItem);
 
-    var gap = '<div></div>';
-
-    contentTop.appendChild(userObj);
-    //contentTop.innerHTML = contentTop.innerHTML + gap;
-    contentTop.appendChild(quantityObj);
-    //contentTop.innerHTML = contentTop.innerHTML + gap;
-    contentTop.appendChild(actionObj);
-    //contentTop.innerHTML = contentTop.innerHTML + gap;
-    contentTop.appendChild(typeObj);
-
-    //contentTop.innerHTML = contentBottom.innerHTML + gap;
-    contentTop.appendChild(itemsObj);
-    //contentTop.innerHTML = contentBottom.innerHTML + gap;
-    //contentTop.innerHTML = contentBottom.innerHTML + gap;
-    //contentTop.innerHTML = contentBottom.innerHTML + gap;
-    contentTop.appendChild(pricesObj);
-    //contentTop.innerHTML = contentBottom.innerHTML + gap;
+    contentTop.appendChild(itemsItem);
+    contentTop.appendChild(pricesItem);
 
     container.appendChild(contentTop);
-    //container.appendChild(contentBottom);
 
-    //container.innerHTML = container.innerHTML + getTransactionMessage(log);
+    //container.style.title = container.innerHTML + getTransactionMessage(log);
 
     return container;
+}
+
+async function setTexture(div, uuid) {
+    var texture = await api.getTexture(uuid);
+    cached_textures.set(uuid, texture);
+
+    div.src = texture;
 }
 
 function getTransactionMessage(log) {
