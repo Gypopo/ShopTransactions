@@ -10,16 +10,18 @@ export class API {
   /**
   * @returns {Promise<Array<Object>>}
   */
-  async getLogs(id) {
-    var response = await this.fetchWithTimeout(this.API_URL + 'getLogs?id=' + id, {
-      method: 'GET',
-      timeout: 15000
-    });
+  async getExported(id, type) {
+      var response = await this.fetchWithTimeout(this.API_URL + 'getLogs?id=' + id, {
+        method: 'GET',
+        timeout: 15000
+      });
 
-    var raw = await response.text();
-    var map = JSON.parse(raw, (key, value) => this.customReviver(key, value));
+      var raw = await response.text();
+      var json = JSON.parse(raw);
 
-    return map;
+      sessionStorage.setItem('stats', JSON.stringify(json.stats));
+      sessionStorage.setItem('logs', JSON.stringify(json.logs));
+      return type === 'logs' ? JSON.stringify(json.logs) : JSON.stringify(json.stats);
   }
 
   async getPlayer(uuid) {
@@ -31,6 +33,19 @@ export class API {
     var json = await response.json();
 
     return new Player(json.name, uuid);
+  }
+
+  async getTexture(uuid) {
+    /*
+    var response = await this.fetchWithTimeout('https://api.creepernation.net/avatar/' + uuid, {
+      method: 'GET',
+      timeout: 15000
+    });
+
+    var raw = await response.text();
+    */
+
+    return uuid;
   }
 
   customReviver(key, value) {
