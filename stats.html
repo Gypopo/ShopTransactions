@@ -123,24 +123,32 @@
         }
 
         .log-stats {
-            display: grid;
-            grid-template-areas: 
-            ". . . t . . ."
-            ". . ci . co . .";
-            /*grid-template-columns: repeat(2, minmax(0, 1fr));*/
-            row-gap: 20px;
-            /*margin: auto 80px;*/
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cashflow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
         }
 
         .total-transactions {
-            grid-area: t;
+            font-size: 48px;
         }
 
         .total-cashflow-in {
+            font-size: 36px;
             grid-area: ci;
         }
 
         .total-cashflow-out {
+            font-size: 36px;
             grid-area: co;
         }
 
@@ -153,6 +161,13 @@
             text-align: center;
         }
 
+        .centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         .ranking-table {
             margin: 10px 10px;
             padding: 5px;
@@ -163,10 +178,15 @@
 
         .ranking-head {
             margin: 10px 10px;
-            padding: 5px;
+            padding: 10px 20px;
             background-color: #ffffff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
+        }
+
+        .ranking-title {
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .seperator {
@@ -273,16 +293,17 @@
                 grid-template-columns: repeat(1, minmax(0, 1fr));
                 row-gap: 10px;
             }
+
             .top-players {
                 grid-template-columns: repeat(1, minmax(0, 1fr));
                 row-gap: 10px;
             }
-            .log-stats {
-                grid-template-areas: 
-                "t"
-                "ci"
-                "co";
-                row-gap: 10px;
+
+            .cashflow-container {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+                max-width: none;
             }
         }
 
@@ -357,20 +378,24 @@
             <div class="log-stats">
                 <div class="ranking-item total-transactions">
                     <div class="ranking-title">Total transactions</div>
-                    <div class="ranking-head" style="font-size: 48px;">
-                        128
+                    <div class="ranking-head" id="total-transactions">
+                        38
                     </div>
                 </div>
-                <div class="ranking-item total-cashflow-in">
-                    <div class="ranking-title">Total Cachflow In</div>
-                    <div class="ranking-head" style="font-size: 36px;">
-                        $39,058.02
+
+                <div class="cashflow-container">
+                    <div class="ranking-item total-cashflow-in">
+                        <div class="ranking-title">Total Cashflow In</div>
+                        <div class="ranking-head" id="total-cashflow-in">
+                            $4,173,811.67
+                        </div>
                     </div>
-                </div>
-                <div class="ranking-item total-cashflow-out">
-                    <div class="ranking-title">Total Cachflow Out</div>
-                    <div class="ranking-head" style="font-size: 36px;">
-                        $28,480.60
+
+                    <div class="ranking-item total-cashflow-out">
+                        <div class="ranking-title">Total Cashflow Out</div>
+                        <div class="ranking-head" id="total-cashflow-out">
+                            $39.77
+                        </div>
                     </div>
                 </div>
             </div>
@@ -382,7 +407,7 @@
             <div class="top-items">
                 <div class="ranking-item top-bought-items-month">
                     <div class="ranking-title">Top bought items(last month)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-bought-items-month">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -391,7 +416,7 @@
                 </div>
                 <div class="ranking-item top-bought-items-week">
                     <div class="ranking-title">Top bought items(last week)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-bought-items-week">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -400,7 +425,7 @@
                 </div>
                 <div class="ranking-item top-bought-items-day">
                     <div class="ranking-title">Top bought items(last day)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-bought-items-day">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -410,7 +435,7 @@
 
                 <div class="ranking-item top-sold-items-month">
                     <div class="ranking-title">Top sold items(last month)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-sold-items-month">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -419,7 +444,7 @@
                 </div>
                 <div class="ranking-item top-sold-items-week">
                     <div class="ranking-title">Top sold items(last week)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-sold-items-week">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -428,7 +453,7 @@
                 </div>
                 <div class="ranking-item top-sold-items-day">
                     <div class="ranking-title">Top sold items(last day)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-sold-items-day">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -444,7 +469,7 @@
             <div class="top-players">
                 <div class="ranking-item top-players-purchased-month">
                     <div class="ranking-title">Top players bought items(last month)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-players-purchased-month">
                         <ul>
                             <li>Gypopo - 50</li>
                             <li>Leasoncre - 30</li>
@@ -453,7 +478,7 @@
                 </div>
                 <div class="ranking-item top-players-purchased-week">
                     <div class="ranking-title">Top players bought items(last week)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-players-purchased-week">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -462,7 +487,7 @@
                 </div>
                 <div class="ranking-item top-players-purchased-day">
                     <div class="ranking-title">Top players bought items(last day)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-players-purchased-day">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -472,7 +497,7 @@
 
                 <div class="ranking-item top-players-sold-month">
                     <div class="ranking-title">Top players sold items(last month)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-players-sold-month">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -481,7 +506,7 @@
                 </div>
                 <div class="ranking-item top-players-sold-week">
                     <div class="ranking-title">Top players sold items(last week)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-players-sold-week">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
@@ -490,7 +515,7 @@
                 </div>
                 <div class="ranking-item top-players-sold-day">
                     <div class="ranking-title">Top players sold items(last day)</div>
-                    <div class="ranking-table">
+                    <div class="ranking-table" id="top-players-sold-day">
                         <ul>
                             <li>Grass Block</li>
                             <li>Iron Ingot</li>
