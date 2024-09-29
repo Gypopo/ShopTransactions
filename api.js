@@ -11,17 +11,15 @@ export class API {
   * @returns {Promise<Array<Object>>}
   */
   async getExported(id, type) {
-      var response = await this.fetchWithTimeout(this.API_URL + 'getLogs?id=' + id, {
-        method: 'GET',
-        timeout: 15000
-      });
+    var response = await this.fetchWithTimeout(this.API_URL + 'getLogs?id=' + id, {
+      method: 'GET',
+      timeout: 15000
+    });
 
-      var raw = await response.text();
-      var json = JSON.parse(raw);
+    var raw = await response.text();
+    var json = JSON.parse(raw);
 
-      sessionStorage.setItem('stats', JSON.stringify(json.stats));
-      sessionStorage.setItem('logs', JSON.stringify(json.logs));
-      return type === 'logs' ? JSON.stringify(json.logs) : JSON.stringify(json.stats);
+    return json;
   }
 
   async getPlayer(uuid) {
@@ -33,49 +31,6 @@ export class API {
     var json = await response.json();
 
     return new Player(json.name, uuid);
-  }
-
-  async getTexture(uuid) {
-    /*
-    var response = await this.fetchWithTimeout('https://api.creepernation.net/avatar/' + uuid, {
-      method: 'GET',
-      timeout: 15000
-    });
-
-    var raw = await response.text();
-    */
-
-    return uuid;
-  }
-
-  customReviver(key, value) {
-    if (typeof value === 'object' && value !== null) {
-      // Check if the object has specific keys to determine if it needs to be converted to a CustomObject
-      if ('date' in value && 'player' in value && 'prices' in value && 'amount' in value && 'action' in value && 'type' in value) {
-        if (Array.isArray(value.items)) {
-          return new MultipleTransaction(
-            value.date,
-            new Player(value.player.name, value.player.uuid),
-            value.items.map(item => new MultipleItem(item.amount, item.name, item.item, item.mat)),
-            value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
-            value.amount,
-            value.action,
-            value.type
-          );
-        } else {
-          return new SingleTransaction(
-            value.date,
-            new Player(value.player.name, value.player.uuid),
-            new SingleItem(value.items.name, value.items.item, value.items.mat),
-            value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
-            value.amount,
-            value.action,
-            value.type
-          );
-        }
-      }
-    }
-    return value;
   }
 
   recursivelyDeserializePrices(prices) {
@@ -93,12 +48,12 @@ export class API {
 
   priceReviver(key, value) {
     if (Array.isArray(value)) {
-        // If the value is an array, map each element to a Price object
-        return value.map(obj => new Price(obj.formatted, obj.ecoType));
+      // If the value is an array, map each element to a Price object
+      return value.map(obj => new Price(obj.formatted, obj.ecoType));
     }
     // If the value is not an array, return it as is
     return value;
-}
+  }
 
   /**
  * @returns {Promise<Array<Object>>}

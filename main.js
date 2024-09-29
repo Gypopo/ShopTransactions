@@ -5,6 +5,10 @@ import { TransactionType } from "./objects/TransactionType.js";
 import { MultipleTransaction } from "./objects/transactions/MultipleTransaction.js";
 import { SingleTransaction } from "./objects/transactions/SingleTransaction.js";
 import { Nav } from "./nav.js";
+import { Player } from "./objects/Player.js";
+import { SingleItem } from "./objects/items/SingleItem.js";
+import { MultipleItem } from "./objects/items/MultipleItem.js";
+import { Price } from "./objects/Price.js";
 
 var pages = document.getElementById('logs');
 var api = new API();
@@ -20,13 +24,11 @@ async function init() {
     var params = new URLSearchParams(window.location.search);
     if (params.has("id")) {
         try {
-            var rawLogs;
-            if (sessionStorage.getItem('logs')) {
-                rawLogs = sessionStorage.getItem('logs');
-            } else {
-                rawLogs = await api.getExported(params.get('id'));
-            }
-            logs.init(JSON.parse(rawLogs, customReviver));
+            var exported = await api.getExported(params.get('id'));
+            var raw = JSON.stringify(exported.logs);
+
+            logs.init(JSON.parse(raw, customReviver));
+
             completeLoading();
         } catch (e) {
             if (e.name === 'AbortError') {
@@ -63,7 +65,8 @@ async function completeLoading() {
     loader.remove();
 
     for (var i in logs.get()) {
-        pages.appendChild(createLog(logs.get()[i]));
+        var log = await createLog(logs.get()[i]);
+        pages.appendChild(log);
     }
 
 }
@@ -213,7 +216,9 @@ function createLog(log) {
 
     var avatar = document.createElement('img');
     avatar.style.height = '100%';
-    avatar.src = 'https://api.creepernation.net/avatar/' + log.player.uuid;
+    //avatar.src = 'https://api.creepernation.net/avatar/' + log.player.uuid;
+    var texture = await getTexture(log.player.uuid);
+    avatar.src = texture;
     avatarFrame.appendChild(avatar);
 
     // Transaction owner

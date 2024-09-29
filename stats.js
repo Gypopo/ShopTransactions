@@ -1,7 +1,9 @@
 import { API } from "./api.js";
+import { LogsProvider } from "./LogsProvider.js";
 import { Nav } from "./nav.js";
 import { Stats } from "./objects/Stats.js";
 import { GeneralStats } from "./objects/stats/GeneralStats.js";
+import { TopItem } from "./objects/stats/TopItem.js";
 import { TopItems } from "./objects/stats/TopItems.js";
 import { TopPlayer } from "./objects/stats/TopPlayer.js";
 
@@ -9,6 +11,7 @@ var api = new API();
 var nav = new Nav();
 var stats;
 var cached_textures = new Map();
+var logsProvider;
 
 init();
 
@@ -18,13 +21,10 @@ async function init() {
     var params = new URLSearchParams(window.location.search);
     if (params.has("id")) {
         try {
-            var rawStats;
-            if (sessionStorage.getItem('stats')) {
-                rawStats = sessionStorage.getItem('stats');
-            } else {
-                rawStats = await api.getExported(params.get('id'));
-            }
-            stats = new Stats(JSON.parse(rawStats));
+            var exported = await api.getExported(params.get('id'));
+            var raw = JSON.stringify(exported.stats);
+
+            stats = new Stats(JSON.parse(raw));
             completeLoading();
         } catch (e) {
             if (e.name === 'AbortError') {
@@ -58,5 +58,4 @@ async function completeLoading() {
 
     var container = document.getElementById('container');
     container.style.display = 'block';
-
 }
