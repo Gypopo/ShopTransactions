@@ -202,7 +202,7 @@ function createLog(log) {
  * @param {Object} log
  * @returns {HTMLElement}
  */
-function createLog(log) {
+async function createLog(log) {
     var container = document.createElement('div');
     container.className = 'log-container';
     //container.id = 'page' + i;
@@ -283,6 +283,16 @@ function createLog(log) {
     //container.style.title = container.innerHTML + getTransactionMessage(log);
 
     return container;
+}
+
+async function getTexture(uuid) {
+    var texture = cached_textures.get(uuid);
+    if (!texture) {
+        texture = await api.getTexture(uuid);
+        cached_textures.set(uuid, texture);
+    }
+
+    return texture;
 }
 
 async function setTexture(div, uuid) {

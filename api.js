@@ -33,6 +33,36 @@ export class API {
     return new Player(json.name, uuid);
   }
 
+  async getTexture(uuid) {
+    try {
+      var response = await this.fetchWithTimeout('https://crafthead.net/helm/' + uuid, {
+        method: 'GET',
+        timeout: 15000
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to retrieve skull texture for player ' + uuid);
+      }
+
+      const blob = await response.blob();
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = () => {
+          reject(new Error('Failed to read blob as Data URL'));
+        };
+
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('Failed to retrieve skull texture for player ' + uuid, error);
+      throw error;
+    }
+  }
+
   recursivelyDeserializePrices(prices) {
     let deserializedPrices = {};
     for (let key in prices) {
