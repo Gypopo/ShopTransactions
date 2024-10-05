@@ -74,28 +74,36 @@ function fillGeneralStats() {
     var tt = document.getElementById('total-transactions');
     tt.innerText = generalStats.getTotalTransactions();
 
+    var list = generalStats.getCashIn().length >= 1 || generalStats.getCashOut().length >= 1;
+
     var TCI = document.getElementById('total-cashflow-in');
     if (generalStats.getCashIn().length != 0) {
-        var s = '';
-        var i = 0;
-        for (var price of generalStats.getCashIn()) {
-            s = s + (i == 0 ? price.formatted : ', ' + price.formatted)
-            i++;
+        if (list) {
+            var TCI_list = '<ul>';
+            for (var price of generalStats.getCashIn()) {
+                TCI_list = TCI_list + '<li>' + price.formatted + '</li>';
+            }
+            TCI.style.fontSize = '18px';
+            TCI.innerHTML = TCI_list + '</ul>';
+        } else {
+            TCI.innerHTML = generalStats.getCashIn().get(0).formatted;
         }
-        TCI.innerText = s;
     } else {
         TCI.innerText = 'No data yet';
     }
 
     var TCO = document.getElementById('total-cashflow-out');
     if (generalStats.getCashOut().length != 0) {
-        var s = '';
-        var i = 0;
-        for (var price of generalStats.getCashOut()) {
-            s = s + (i == 0 ? price.formatted : ', ' + price.formatted)
-            i++;
+        if (list) {
+            var TCO_list = '<ul>';
+            for (var price of generalStats.getCashOut()) {
+                TCO_list = TCO_list + '<li>' + price.formatted + '</li>';
+            }
+            TCO.style.fontSize = '18px';
+            TCO.innerHTML = TCO_list + '</ul>';
+        } else {
+            TCO.innerHTML = generalStats.getCashOut().get(0).formatted;
         }
-        TCO.innerText = s;
     } else {
         TCO.innerText = 'No data yet';
     }
