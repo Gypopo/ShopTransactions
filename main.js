@@ -58,17 +58,82 @@ function setLoading() {
     loading = true;
 }
 
+var timeOffset = new Date().getTimezoneOffset() * 60 * 1000;
+
 async function completeLoading() {
     //var page = createPage(1);
 
     var loader = document.getElementById('loader')
     loader.remove();
 
+    const oneDay = 86400000;
+    var today = new Date();
+    today.setHours(12, 0, 0, 0);
+    var prevDate = today.getTime() - timeOffset;
+
+    var title = false;
     for (var i in logs.get()) {
-        var log = await createLog(logs.get()[i]);
-        pages.appendChild(log);
+        var log = logs.get()[i];
+        var date = log.date - timeOffset;
+
+        // Check if the log is from today or a previous day
+        if (date <= prevDate) {
+            if (date > (prevDate - oneDay)) {
+                if (!title) {
+                    var formatted = formatDate(today);
+                    var container = document.createElement('div');
+                    container.className = 'time-container';
+
+                    container.innerHTML = formatted + '<hr style="border: 2px solid black; background-color: black;">';
+                    pages.appendChild(container);
+
+                    title = true;
+                }
+
+                var log = await createLog(logs.get()[i]);
+                pages.appendChild(log);
+            } else {
+                const dayDiff = Math.floor((prevDate - date) / oneDay); // The amount of full days which passed without transactions
+                today.setDate(today.getDate() - dayDiff);
+                prevDate = today.getTime() - timeOffset;
+                title = false;
+
+                if (!title) {
+                    var formatted = formatDate(today);
+                    var container = document.createElement('div');
+                    container.className = 'time-container';
+
+                    container.innerHTML = formatted + '<div class="seperator"><hr style="border: 2px solid black; background-color: black;"></div>';
+                    pages.appendChild(container);
+
+                    title = true;
+                }
+
+                var log = await createLog(logs.get()[i]);
+                pages.appendChild(log);
+            }
+        }
     }
 
+}
+
+function formatDate(date) {
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const formatStrippedDate = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+    if (formatStrippedDate(date).getTime() === formatStrippedDate(today).getTime()) {
+        return "Today";
+    }
+    else if (formatStrippedDate(date).getTime() === formatStrippedDate(yesterday).getTime()) {
+        return "Yesterday";
+    }
+    else {
+        const options = { weekday: 'long', day: 'numeric', month: 'long' };
+        return date.toLocaleDateString(undefined, options);
+    }
 }
 
 function customReviver(key, value) {
@@ -288,7 +353,7 @@ async function createLog(log) {
 async function getTexture(uuid) {
     var texture = cached_textures.get(uuid);
     if (!texture) {
-        texture = await api.getTexture(uuid);
+        texture = 'null'/*await api.getTexture(uuid)*/;
         cached_textures.set(uuid, texture);
     }
 
