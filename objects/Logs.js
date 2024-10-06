@@ -28,6 +28,14 @@ export class Logs {
         });
     }
 
+    getByPlayer(name) {
+        return this.logs.filter(log => log.player.name === name);
+    }
+
+    getPlayers() {
+        return new Set(this.logs.map(log => log.player.name));
+    }
+
     /**
      * @param {string} id
      * @param {Card} card

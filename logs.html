@@ -226,19 +226,36 @@
                 </li>
             </ul>
         </div>
-      </nav>
+        </nav>
 
-    <div class="logs-container" id="logs">
-        <div class="log-guide">
-            <div class="log-guide-item">Player</div>
-            <div class="log-guide-item">Amount</div>
-            <div class="log-guide-item">Action</div>
-            <div class="log-guide-item">Method</div>
-            <div class="log-guide-item">Item(s)</div>
-            <div class="log-guide-item">Price(s)</div>
+        <div class="logs-container" id="logs">
+            <div class="log-guide">
+                <div class="log-guide-item">
+                    Player
+                    <select name="players" id="player-filter"></select>
+                </div>
+
+                <div class="log-guide-item">
+                    Amount
+                    <input type="text" id="amount-filter" placeholder="Filter by amount"></input>
+                </div>
+
+                <div class="log-guide-item">
+                    Action
+                    <select name="actions" id="action-filter"></select>
+                </div>
+
+                <div class="log-guide-item">Method</div>
+                <select name="methods" id="methods-filter"></select>
+
+                <div class="log-guide-item">Item(s)</div>
+                <select name="items" id="items-filter"></select>
+
+                <div class="log-guide-item">Price(s)</div>
+                <select name="prices" id="prices-filter"></select>
+            </div>
         </div>
-    </div>
-    <script type="module" src="main.js"></script>
+        <script type="module" src="main.js"></script>
 </body>
 
 </html>

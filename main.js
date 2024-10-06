@@ -61,19 +61,24 @@ function setLoading() {
 var timeOffset = new Date().getTimezoneOffset() * 60 * 1000;
 
 async function completeLoading() {
+    loadFilters();
+    registerFilters();
     //var page = createPage(1);
 
     var loader = document.getElementById('loader')
     loader.remove();
 
+    splitLogsByDate(logs.get());
+}
+
+async function splitLogsByDate(logs) {
     const oneDay = 86400000;
     var today = new Date();
     today.setHours(12, 0, 0, 0);
     var prevDate = today.getTime() - timeOffset;
 
     var title = false;
-    for (var i in logs.get()) {
-        var log = logs.get()[i];
+    for (var log of logs) {
         var date = log.date - timeOffset;
 
         // Check if the log is from today or a previous day
@@ -90,8 +95,8 @@ async function completeLoading() {
                     title = true;
                 }
 
-                var log = await createLog(logs.get()[i]);
-                pages.appendChild(log);
+                var ele = await createLog(log);
+                pages.appendChild(ele);
             } else {
                 const dayDiff = Math.floor((prevDate - date) / oneDay); // The amount of full days which passed without transactions
                 today.setDate(today.getDate() - dayDiff);
@@ -109,12 +114,11 @@ async function completeLoading() {
                     title = true;
                 }
 
-                var log = await createLog(logs.get()[i]);
-                pages.appendChild(log);
+                var ele = await createLog(log);
+                pages.appendChild(ele);
             }
         }
     }
-
 }
 
 function formatDate(date) {
@@ -138,33 +142,55 @@ function formatDate(date) {
 
 function customReviver(key, value) {
     if (typeof value === 'object' && value !== null) {
-      // Check if the object has specific keys to determine if it needs to be converted to a CustomObject
-      if ('date' in value && 'player' in value && 'prices' in value && 'amount' in value && 'action' in value && 'type' in value) {
-        if (Array.isArray(value.items)) {
-          return new MultipleTransaction(
-            value.date,
-            new Player(value.player.name, value.player.uuid),
-            value.items.map(item => new MultipleItem(item.amount, item.name, item.item, item.mat)),
-            value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
-            value.amount,
-            value.action,
-            value.type
-          );
-        } else {
-          return new SingleTransaction(
-            value.date,
-            new Player(value.player.name, value.player.uuid),
-            new SingleItem(value.items.name, value.items.item, value.items.mat),
-            value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
-            value.amount,
-            value.action,
-            value.type
-          );
+        // Check if the object has specific keys to determine if it needs to be converted to a CustomObject
+        if ('date' in value && 'player' in value && 'prices' in value && 'amount' in value && 'action' in value && 'type' in value) {
+            if (Array.isArray(value.items)) {
+                return new MultipleTransaction(
+                    value.date,
+                    new Player(value.player.name, value.player.uuid),
+                    value.items.map(item => new MultipleItem(item.amount, item.name, item.item, item.mat)),
+                    value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
+                    value.amount,
+                    value.action,
+                    value.type
+                );
+            } else {
+                return new SingleTransaction(
+                    value.date,
+                    new Player(value.player.name, value.player.uuid),
+                    new SingleItem(value.items.name, value.items.item, value.items.mat),
+                    value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
+                    value.amount,
+                    value.action,
+                    value.type
+                );
+            }
         }
-      }
     }
     return value;
-  }
+}
+
+function registerFilters() {
+    const playerFilter = document.getElementById('player-filter');
+
+    playerFilter.addEventListener('change', function (event) {
+        const p = event.target.value;
+
+        pages.innerHTML = '';
+        splitLogsByDate(logs.getByPlayer(p));
+    });
+}
+
+function loadFilters() {
+    const playerFilter = document.getElementById('player-filter');
+
+    var options = '';
+    for (const p of logs.getPlayers()) {
+        console.log(p);
+        options += '<option value="' + p + '">' + p + '</option>';
+    }
+    playerFilter.innerHTML = options;
+}
 
 /**
  * @param {Number} i
