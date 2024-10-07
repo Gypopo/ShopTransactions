@@ -171,6 +171,7 @@ function customReviver(key, value) {
 }
 
 function registerFilters() {
+    // Player filter
     const playerFilter = document.getElementById('player-filter');
 
     playerFilter.addEventListener('change', function (event) {
@@ -179,6 +180,62 @@ function registerFilters() {
         pages.innerHTML = '';
         splitLogsByDate(logs.getByPlayer(p));
     });
+
+    // Amount filter toggler
+    const amtToggler = document.getElementById("amount-filter-toggler");
+    amtToggler.addEventListener("click", function () {
+        const container = document.getElementById("slider-container");
+        if (container.style.display === 'none') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    });
+
+    // Amount filter
+    const minSlider = document.getElementById("slider1");
+    const maxSlider = document.getElementById("slider2");
+
+    minSlider.addEventListener("input", function () {
+        updateSlider('lower');
+    });
+
+    maxSlider.addEventListener("input", function () {
+        updateSlider('upper');
+    });
+
+    updateSlider('lower');
+}
+
+function updateSlider(sliderType) {
+    const minSlider = document.getElementById("slider1");
+    const maxSlider = document.getElementById("slider2");
+
+    var min = parseInt(minSlider.value);
+    var max = parseInt(maxSlider.value);
+
+    if (sliderType === 'lower') {
+        if (min >= max) {
+            minSlider.value = max;
+            min = max;
+        }
+    } else {
+        if (max <= min) {
+            maxSlider.value = min;
+            max = min;
+        }
+    }
+
+    let lowerDisplay = min <= 64 ? min : (min > 64 ? 0 : 64) + (min - 64) * 64;
+    let upperDisplay = max <= 64 ? max : (max > 64 ? 0 : 64) + (max - 64) * 64;
+
+    document.getElementById('slider-value').textContent = `Amount: ${lowerDisplay}-${upperDisplay}`;
+
+    const range = minSlider.max - minSlider.min;
+    const minPercent = ((min - minSlider.min) / range) * 100;
+    const maxPercent = ((max - maxSlider.min) / range) * 100;
+  
+    slider1.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
 }
 
 function loadFilters() {

@@ -199,6 +199,51 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Amount filter */
+        .slider-container {
+            position: absolute;
+            width: 300px;
+    background-color: #f1f1f1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+        }
+
+        #slider1,
+        #slider2 {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            pointer-events: none;
+            background: transparent;
+            position: absolute;
+            width: calc(100% - 40px);
+            border-radius: 50px;
+        }
+
+        #slider1::-webkit-slider-runnable-track,
+#slider2::-webkit-slider-runnable-track {
+    width: calc(100% - 40px);
+}
+
+        #slider1::-webkit-slider-thumb,
+        #slider2::-webkit-slider-thumb {
+            -webkit-appearance: slider-horizontal;
+            appearance: slider-horizontal;
+            pointer-events: auto;
+            z-index: 10;
+            width: 8px;
+            height: 8px;
+            background-color: blue;
+            border-radius: 50%;
+        }
+
+        #slider2::-webkit-slider-thumb {
+            z-index: 11;
+        }
     </style>
 </head>
 
@@ -235,9 +280,18 @@
                     <select name="players" id="player-filter"></select>
                 </div>
 
-                <div class="log-guide-item">
-                    Amount
-                    <input type="text" id="amount-filter" placeholder="Filter by amount"></input>
+                <div class="log-guide-item" style="display: flex;">
+                    <span style="margin-right: 10px;">Amount</span>
+                    <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
+                    <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
+                        <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;" title="Click to toggle slider" id="amount-filter-toggler"></img>
+                    
+                        <div class="slider-container" id="slider-container" style="display: none; margin-top: 25px;">
+                            <div id="slider-value"></div>
+                            <input type="range" id="slider1" min="1" max="128" value="1">
+                            <input type="range" id="slider2" min="1" max="128" value="128">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="log-guide-item">
