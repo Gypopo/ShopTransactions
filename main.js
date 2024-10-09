@@ -183,12 +183,24 @@ function registerFilters() {
 
     // Amount filter toggler
     const amtToggler = document.getElementById("amount-filter-toggler");
+    const sliderContainer = document.getElementById("slider-container");
     amtToggler.addEventListener("click", function () {
-        const container = document.getElementById("slider-container");
-        if (container.style.display === 'none') {
-            container.style.display = 'block';
+        if (sliderContainer.style.display === 'none') {
+            sliderContainer.style.display = 'block';
+
+            const sliderCanceller = document.createElement('div');
+            sliderCanceller.className = 'slider-canceller';
+            sliderCanceller.id = 'slider-canceller';
+            document.body.appendChild(sliderCanceller);
+            sliderCanceller.addEventListener("click", function (e) {
+                if (e.target != sliderContainer) {
+                    sliderContainer.style.display = 'none';
+                    document.body.removeChild(sliderCanceller);
+                }
+            });
         } else {
-            container.style.display = 'none';
+            sliderContainer.style.display = 'none';
+            document.getElementById("slider-canceller").remove();
         }
     });
 
@@ -234,7 +246,7 @@ function updateSlider(sliderType) {
     const range = minSlider.max - minSlider.min;
     const minPercent = ((min - minSlider.min) / range) * 100;
     const maxPercent = ((max - maxSlider.min) / range) * 100;
-  
+
     slider1.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
 }
 
