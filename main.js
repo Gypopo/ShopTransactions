@@ -209,17 +209,17 @@ function registerFilters() {
     const maxSlider = document.getElementById("slider2");
 
     minSlider.addEventListener("input", function () {
-        updateSlider('lower');
+        updateSlider('lower', true);
     });
 
     maxSlider.addEventListener("input", function () {
-        updateSlider('upper');
+        updateSlider('upper', true);
     });
 
-    updateSlider('lower');
+    updateSlider('lower', false);
 }
 
-function updateSlider(sliderType) {
+function updateSlider(sliderType, updated) {
     const minSlider = document.getElementById("slider1");
     const maxSlider = document.getElementById("slider2");
 
@@ -238,16 +238,21 @@ function updateSlider(sliderType) {
         }
     }
 
-    let lowerDisplay = min <= 64 ? min : (min > 64 ? 0 : 64) + (min - 64) * 64;
-    let upperDisplay = max <= 64 ? max : (max > 64 ? 0 : 64) + (max - 64) * 64;
+    let finalMin = min <= 64 ? min : (min > 64 ? 0 : 64) + (min - 64) * 64;
+    let finalMax = max <= 64 ? max : (max > 64 ? 0 : 64) + (max - 64) * 64;
 
-    document.getElementById('slider-value').textContent = `Amount: ${lowerDisplay}-${upperDisplay}`;
+    document.getElementById('slider-value').textContent = `Amount: ${finalMin}-${finalMax}`;
 
     const range = minSlider.max - minSlider.min;
     const minPercent = ((min - minSlider.min) / range) * 100;
     const maxPercent = ((max - maxSlider.min) / range) * 100;
 
     slider1.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
+
+    if (updated) {
+    pages.innerHTML = '';
+    splitLogsByDate(logs.getByAmount(finalMin, finalMax));
+    }
 }
 
 function loadFilters() {

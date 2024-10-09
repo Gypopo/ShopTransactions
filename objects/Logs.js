@@ -36,6 +36,10 @@ export class Logs {
         return new Set(this.logs.map(log => log.player.name));
     }
 
+    getByAmount(min, max) {
+        return this.logs.filter(log => log.amount >= min && log.amount <= max);
+    }
+
     /**
      * @param {string} id
      * @param {Card} card
