@@ -1,15 +1,33 @@
 export class Logs {
 
-    pageSize;
     logs;
+    dates;
 
-    /**
+     // Active filters
+     playerFilter = "all";
+     amountFilterMin = 1;
+     amountFilterMax = 4096;
+ 
+     /**
      * @param {Array<Object>} logs
+     * @param {Array<SimpleMonth>} dates
      */
-    init(logs) {
-        this.logs = logs;
-        this.pageSize = 5;
-    }
+     init(logs, dates) {
+         this.logs = logs;
+         this.dates = dates;
+     }
+ 
+     getAndFilter() {
+         var filtered = this.logs;
+ 
+         if (this.playerFilter !== 'all')
+             filtered = filtered.filter(log => log.player.name === this.playerFilter);
+ 
+         if (this.amountFilterMin != 1 || this.amountFilterMax != 4096)
+             filtered = filtered.filter(log => log.amount >= this.amountFilterMin && log.amount <= this.amountFilterMax);
+
+         return filtered;
+     }
 
     /**
      * @return {Array<Object>}
@@ -33,7 +51,10 @@ export class Logs {
     }
 
     getPlayers() {
-        return new Set(this.logs.map(log => log.player.name));
+        var arr = this.logs.map(log => log.player.name);
+        arr.unshift("all");
+
+        return new Set(arr);
     }
 
     getByAmount(min, max) {

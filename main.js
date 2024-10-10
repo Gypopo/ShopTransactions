@@ -175,10 +175,10 @@ function registerFilters() {
     const playerFilter = document.getElementById('player-filter');
 
     playerFilter.addEventListener('change', function (event) {
-        const p = event.target.value;
+        logs.playerFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getByPlayer(p));
+        splitLogsByDate(logs.getAndFilter());
     });
 
     // Amount filter toggler
@@ -250,8 +250,11 @@ function updateSlider(sliderType, updated) {
     slider1.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
 
     if (updated) {
+        logs.amountFilterMin = finalMin;
+        logs.amountFilterMax = finalMax;
+
     pages.innerHTML = '';
-    splitLogsByDate(logs.getByAmount(finalMin, finalMax));
+    splitLogsByDate(logs.getAndFilter());
     }
 }
 
