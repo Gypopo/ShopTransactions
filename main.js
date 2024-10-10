@@ -253,8 +253,12 @@ function updateSlider(sliderType, updated) {
         logs.amountFilterMin = finalMin;
         logs.amountFilterMax = finalMax;
 
-    pages.innerHTML = '';
-    splitLogsByDate(logs.getAndFilter());
+        setTimeout(function () {
+            if (finalMin == logs.amountFilterMin && finalMax == logs.amountFilterMax) {
+                pages.innerHTML = '';
+                splitLogsByDate(logs.getAndFilter());
+            }
+        }, 2000);
     }
 }
 
