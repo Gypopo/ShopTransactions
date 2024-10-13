@@ -5,16 +5,9 @@ export class GeneralStats {
     * @param {Array<string>} cashOut
     */
     constructor(generalStats) {
-        for (var object of generalStats) {
-            var key = Object.keys(object)[0];
-            if (key === 'transactions') {
-                this.totalTransactions = object.transactions;
-            } else if (key === 'cashIn') {
-                this.cashIn = object.cashIn;
-            } else if (key === 'cashOut') {
-                this.cashOut = object.cashOut;
-            }
-        }
+        this.totalTransactions = generalStats.transactions;
+        this.cashIn = generalStats.cashIn;
+        this.cashOut = generalStats.cashOut;
     }
 
     /**
