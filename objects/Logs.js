@@ -38,6 +38,9 @@ export class Logs {
         if (this.methodFilter !== 'ALL')
             filtered = filtered.filter(log => log.type === this.methodFilter);
 
+        if (this.itemFilter !== 'all')
+            filtered = filtered.filter(log => (log instanceof MultipleTransaction ? log.items.filter(item => item.item) : log.item.item) === this.itemFilter);
+
         return filtered;
     }
 
@@ -72,6 +75,56 @@ export class Logs {
 
     getByAmount(min, max) {
         return this.logs.filter(log => log.amount >= min && log.amount <= max);
+    }
+
+    getItems() {
+        let logsMap = new Map();
+
+        this.logs.forEach(log => {
+            if (log instanceof MultipleTransaction) {
+                log.items.forEach(item => {
+                    if (!logsMap.has(item.item))
+                        logsMap.set(item.item, item.name + '(' + item.item + ')');
+                });
+            } else {
+                if (!logsMap.has(log.item.item))
+                    logsMap.set(log.item.item, log.item.name + '(' + log.item.item + ')');
+            }
+        });
+
+        let sorted = Array.from(logsMap.entries()).sort((a, b) => {
+            console.log(b[0])
+            let path1 = a[0].split('.');
+            let path2 = b[0].split('.');
+
+            if (path1[0] < path2[0]) return -1;
+            if (path1[0] > path2[0]) return 1;
+
+            if (path1[1] < path2[1]) return -1;
+            if (path1[1] > path2[1]) return 1;
+
+            return parseInt(path1[3]) - parseInt(path2[3]);
+        });
+
+        sorted.unshift(["all", "all"]);
+
+        let sortedItems = new Map();
+        let currentSection = null;
+
+        sorted.forEach(([key, value]) => {
+            let s = key.split('.')[0];
+
+            if (s !== currentSection) {
+                sortedItems.set(s, s);
+                currentSection = s;
+            }
+
+            sortedItems.set(key, value);
+        });
+
+        //sortedItems.forEach(s => console.log(s));
+
+        return sortedItems;
     }
 
     /**

@@ -237,6 +237,16 @@ function registerFilters() {
         pages.innerHTML = '';
         splitLogsByDate(logs.getAndFilter());
     });
+
+    // Item filter
+    const itemFilter = document.getElementById('item-filter');
+
+    itemFilter.addEventListener('change', function (event) {
+        logs.itemFilter = event.target.value;
+
+        pages.innerHTML = '';
+        splitLogsByDate(logs.getAndFilter());
+    });
 }
 
 function updateSlider(sliderType, updated) {
@@ -290,6 +300,23 @@ function loadFilters() {
         players += '<option value="' + p + '">' + p + '</option>';
     }
     playerFilter.innerHTML = players;
+
+    const itemFilter = document.getElementById('item-filter');
+
+    var items = '';
+    var s = 0;
+    for (let [key, value] of logs.getItems()) {
+        if (!key.includes('.') && key !== "all") {
+            if (s != 0)
+                items += '</optgroup>';
+
+            items += `<optgroup label="${key}">`
+            s++;
+        } else {
+            items += `<option value='${key}'>${value}</option>`;
+        }
+    }
+    itemFilter.innerHTML = items;
 }
 
 /**
