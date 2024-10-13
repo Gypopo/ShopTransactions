@@ -1,33 +1,45 @@
+import { MultipleItem } from "./items/MultipleItem.js";
+import { MultipleTransaction } from "./transactions/MultipleTransaction.js";
+
 export class Logs {
 
     logs;
     dates;
 
-     // Active filters
-     playerFilter = "all";
-     amountFilterMin = 1;
-     amountFilterMax = 4096;
- 
-     /**
-     * @param {Array<Object>} logs
-     * @param {Array<SimpleMonth>} dates
-     */
-     init(logs, dates) {
-         this.logs = logs;
-         this.dates = dates;
-     }
- 
-     getAndFilter() {
-         var filtered = this.logs;
- 
-         if (this.playerFilter !== 'all')
-             filtered = filtered.filter(log => log.player.name === this.playerFilter);
- 
-         if (this.amountFilterMin != 1 || this.amountFilterMax != 4096)
-             filtered = filtered.filter(log => log.amount >= this.amountFilterMin && log.amount <= this.amountFilterMax);
+    // Active filters
+    playerFilter = "all";
+    amountFilterMin = 1;
+    amountFilterMax = 4096;
+    actionFilter = "BUY/SELL";
+    methodFilter = "ALL";
+    itemFilter = "all";
 
-         return filtered;
-     }
+    /**
+    * @param {Array<Object>} logs
+    * @param {Array<SimpleMonth>} dates
+    */
+    init(logs, dates) {
+        this.logs = logs;
+        this.dates = dates;
+    }
+
+    getAndFilter() {
+        var filtered = this.logs;
+
+        if (this.playerFilter !== 'all')
+            filtered = filtered.filter(log => log.player.name === this.playerFilter);
+
+        if (this.amountFilterMin != 1 || this.amountFilterMax != 4096)
+            filtered = filtered.filter(log => log.amount >= this.amountFilterMin && log.amount <= this.amountFilterMax);
+
+        if (this.actionFilter !== 'BUY/SELL')
+            filtered = filtered.filter(log => log.action === this.actionFilter);
+
+        if (this.methodFilter !== 'ALL')
+            filtered = filtered.filter(log => log.type === this.methodFilter);
+
+        return filtered;
+    }
 
     /**
      * @return {Array<Object>}
@@ -52,6 +64,7 @@ export class Logs {
 
     getPlayers() {
         var arr = this.logs.map(log => log.player.name);
+        arr.sort();
         arr.unshift("all");
 
         return new Set(arr);
@@ -76,7 +89,7 @@ export class Logs {
      */
     getPage(p, filter) {
         var logs = new Array();
-        var i = p*this.pageSize-this.pageSize;
+        var i = p * this.pageSize - this.pageSize;
         while (logs.size < this.pageSize) {
             logs.add(this.logs.get(i++));
         }

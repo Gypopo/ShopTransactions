@@ -204,12 +204,12 @@
         .slider-container {
             position: absolute;
             width: 300px;
-    background-color: #f1f1f1;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 9;
+            background-color: #f1f1f1;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 9;
         }
 
         #slider1,
@@ -225,9 +225,9 @@
         }
 
         #slider1::-webkit-slider-runnable-track,
-#slider2::-webkit-slider-runnable-track {
-    width: calc(100% - 40px);
-}
+        #slider2::-webkit-slider-runnable-track {
+            width: calc(100% - 40px);
+        }
 
         #slider1::-webkit-slider-thumb,
         #slider2::-webkit-slider-thumb {
@@ -287,15 +287,16 @@
             <div class="log-guide">
                 <div class="log-guide-item">
                     Player
-                    <select name="players" id="player-filter"></select>
+                    <select name="players" id="player-filter" style="width: 80px;"></select>
                 </div>
 
                 <div class="log-guide-item" style="display: flex;">
                     <span style="margin-right: 10px;">Amount</span>
                     <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
                     <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
-                        <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;" title="Click to toggle slider" id="amount-filter-toggler"></img>
-                    
+                        <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
+                            title="Click to toggle slider" id="amount-filter-toggler"></img>
+
                         <div class="slider-container" id="slider-container" style="display: none; margin-top: 25px;">
                             <div id="slider-value"></div>
                             <input type="range" id="slider1" min="1" max="128" value="1">
@@ -306,17 +307,39 @@
 
                 <div class="log-guide-item">
                     Action
-                    <select name="actions" id="action-filter"></select>
+                    <select name="actions" id="action-filter" style="width: 60px;">
+                        <option value="BUY/SELL">BUY/SELL</option>
+                        <option value="BUY">BUY</option>
+                        <option value="SELL">SELL</option>
+                    </select>
                 </div>
 
-                <div class="log-guide-item">Method</div>
-                <select name="methods" id="methods-filter"></select>
+                <div class="log-guide-item">
+                    Method
+                    <select name="methods" id="method-filter" style="width: 120px;">
+                        <option value="ALL">ALL</option>
+                        <optgroup label="BUY">
+                            <option value="QUICK_BUY">QUICK_BUY</option>
+                            <option value="BUY_SCREEN">BUY_SCREEN</option>
+                            <option value="BUY_STACKS_SCREEN">BUY_STACKS_SCREEN</option>
+                            <option value="SHOPSTAND_BUY_SCREEN">SHOPSTAND_BUY_SCREEN</option>
+                        </optgroup>
+                        <optgroup label="SELL">
+                            <option value="QUICK_SELL">QUICK_SELL</option>
+                            <option value="SELL_SCREEN">SELL_SCREEN</option>
+                            <option value="SELL_ALL_SCREEN">SELL_ALL_SCREEN</option>
+                            <option value="SELL_GUI_SCREEN">SELL_GUI_SCREEN</option>
+                            <option value="SELL_ALL_COMMAND">SELL_ALL_COMMAND</option>
+                            <option value="SHOPSTAND_SELL_SCREEN">SHOPSTAND_SELL_SCREEN</option>
+                        </optgroup>
+                    </select>
+                </div>
 
                 <div class="log-guide-item">Item(s)</div>
                 <select name="items" id="items-filter"></select>
 
                 <div class="log-guide-item">Price(s)</div>
-                <select name="prices" id="prices-filter"></select>
+                <select name="prices" id="price-filter"></select>
             </div>
             <div class="logs" id="logs"></div>
         </div>

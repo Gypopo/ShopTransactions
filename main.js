@@ -217,6 +217,26 @@ function registerFilters() {
     });
 
     updateSlider('lower', false);
+
+    // Action filter
+    const actionFilter = document.getElementById('action-filter');
+
+    actionFilter.addEventListener('change', function (event) {
+        logs.actionFilter = event.target.value;
+
+        pages.innerHTML = '';
+        splitLogsByDate(logs.getAndFilter());
+    });
+
+    // Method filter
+    const methodFilter = document.getElementById('method-filter');
+
+    methodFilter.addEventListener('change', function (event) {
+        logs.methodFilter = event.target.value;
+
+        pages.innerHTML = '';
+        splitLogsByDate(logs.getAndFilter());
+    });
 }
 
 function updateSlider(sliderType, updated) {
@@ -265,12 +285,11 @@ function updateSlider(sliderType, updated) {
 function loadFilters() {
     const playerFilter = document.getElementById('player-filter');
 
-    var options = '';
+    var players = '';
     for (const p of logs.getPlayers()) {
-        console.log(p);
-        options += '<option value="' + p + '">' + p + '</option>';
+        players += '<option value="' + p + '">' + p + '</option>';
     }
-    playerFilter.innerHTML = options;
+    playerFilter.innerHTML = players;
 }
 
 /**
