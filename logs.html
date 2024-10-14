@@ -212,8 +212,8 @@
             z-index: 9;
         }
 
-        #slider1,
-        #slider2 {
+        .slider1,
+        .slider2 {
             -webkit-appearance: none;
             appearance: none;
             height: 8px;
@@ -224,13 +224,13 @@
             border-radius: 50px;
         }
 
-        #slider1::-webkit-slider-runnable-track,
-        #slider2::-webkit-slider-runnable-track {
+        .slider1::-webkit-slider-runnable-track,
+        .slider2::-webkit-slider-runnable-track {
             width: calc(100% - 40px);
         }
 
-        #slider1::-webkit-slider-thumb,
-        #slider2::-webkit-slider-thumb {
+        .slider1::-webkit-slider-thumb,
+        .slider2::-webkit-slider-thumb {
             -webkit-appearance: slider-horizontal;
             appearance: slider-horizontal;
             pointer-events: auto;
@@ -242,7 +242,7 @@
             cursor: pointer;
         }
 
-        #slider2::-webkit-slider-thumb {
+        .slider2::-webkit-slider-thumb {
             z-index: 11;
         }
 
@@ -295,12 +295,12 @@
                     <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
                     <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
                         <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
-                            title="Click to toggle slider" id="amount-filter-toggler"></img>
+                            title="Click to toggle slider" class="filter-toggler" data-filter-type="amount"></img>
 
-                        <div class="slider-container" id="slider-container" style="display: none; margin-top: 25px;">
-                            <div id="slider-value"></div>
-                            <input type="range" id="slider1" min="1" max="128" value="1">
-                            <input type="range" id="slider2" min="1" max="128" value="128">
+                        <div class="slider-container" id="amount-slider-container" style="display: none; margin-top: 25px;">
+                            <div id="amt-slider-value">Amount: 0 - 4096</div>
+                            <input type="range" id="amt-slider1" class="slider1" min="1" max="128" value="1" style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
+                            <input type="range" id="amt-slider2" class="slider2" min="1" max="128" value="128">
                         </div>
                     </div>
                 </div>
@@ -340,8 +340,20 @@
                     <select name="items" id="item-filter" style="width: 120px;"></select>
                 </div>
 
-                <div class="log-guide-item">Price(s)</div>
-                <select name="prices" id="price-filter"></select>
+                <div class="log-guide-item" style="display: flex;">
+                    <span style="margin-right: 10px;">Price(s)</span>
+                    <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
+                    <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
+                        <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
+                            title="Click to toggle filter" class="filter-toggler" data-filter-type="price"></img>
+
+                        <div class="slider-container" id="price-slider-container" style="display: none; margin-top: 25px;">
+                            <div id="price-slider-value">Price range: 0$ - 1.000.000.000$</div>
+                            <input type="range" id="price-slider1" class="slider1" min="0" max="109" value="0" style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
+                            <input type="range" id="price-slider2" class="slider2" min="0" max="109" value="109">
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="logs" id="logs"></div>
         </div>

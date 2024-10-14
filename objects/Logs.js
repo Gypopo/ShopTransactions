@@ -13,6 +13,8 @@ export class Logs {
     actionFilter = "BUY/SELL";
     methodFilter = "ALL";
     itemFilter = "all";
+    pricesFilterMin = 1;
+    pricesFilterMax = 1000000000;
 
     /**
     * @param {Array<Object>} logs
@@ -93,7 +95,6 @@ export class Logs {
         });
 
         let sorted = Array.from(logsMap.entries()).sort((a, b) => {
-            console.log(b[0])
             let path1 = a[0].split('.');
             let path2 = b[0].split('.');
 

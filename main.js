@@ -182,41 +182,42 @@ function registerFilters() {
     });
 
     // Amount filter toggler
-    const amtToggler = document.getElementById("amount-filter-toggler");
-    const sliderContainer = document.getElementById("slider-container");
-    amtToggler.addEventListener("click", function () {
-        if (sliderContainer.style.display === 'none') {
-            sliderContainer.style.display = 'block';
+    const filterTogglers = document.querySelectorAll('.filter-toggler');
+    filterTogglers.forEach(toggler => {
+        console.log(toggler.dataset.filterType)
+        const sliderContainer = document.getElementById(toggler.dataset.filterType + "-slider-container");
+        toggler.addEventListener("click", function () {
+            if (sliderContainer.style.display === 'none') {
+                sliderContainer.style.display = 'block';
 
-            const sliderCanceller = document.createElement('div');
-            sliderCanceller.className = 'slider-canceller';
-            sliderCanceller.id = 'slider-canceller';
-            document.body.appendChild(sliderCanceller);
-            sliderCanceller.addEventListener("click", function (e) {
-                if (e.target != sliderContainer) {
-                    sliderContainer.style.display = 'none';
-                    document.body.removeChild(sliderCanceller);
-                }
-            });
-        } else {
-            sliderContainer.style.display = 'none';
-            document.getElementById("slider-canceller").remove();
-        }
+                const sliderCanceller = document.createElement('div');
+                sliderCanceller.className = 'slider-canceller';
+                sliderCanceller.id = 'slider-canceller';
+                document.body.appendChild(sliderCanceller);
+                sliderCanceller.addEventListener("click", function (e) {
+                    if (e.target != sliderContainer) {
+                        sliderContainer.style.display = 'none';
+                        document.body.removeChild(sliderCanceller);
+                    }
+                });
+            } else {
+                sliderContainer.style.display = 'none';
+                document.getElementById("slider-canceller").remove();
+            }
+        });
     });
 
     // Amount filter
-    const minSlider = document.getElementById("slider1");
-    const maxSlider = document.getElementById("slider2");
+    const minSlider = document.getElementById("amt-slider1");
+    const maxSlider = document.getElementById("amt-slider2");
 
     minSlider.addEventListener("input", function () {
-        updateSlider('lower', true);
+        updateAmountSlider('min');
     });
 
     maxSlider.addEventListener("input", function () {
-        updateSlider('upper', true);
+        updateAmountSlider('max');
     });
-
-    updateSlider('lower', false);
 
     // Action filter
     const actionFilter = document.getElementById('action-filter');
@@ -247,16 +248,25 @@ function registerFilters() {
         pages.innerHTML = '';
         splitLogsByDate(logs.getAndFilter());
     });
+
+    // Prices filter
+    document.getElementById("price-slider1").addEventListener("input", function () {
+        updatePricesSlider('min');
+    });
+
+    document.getElementById("price-slider2").addEventListener("input", function () {
+        updatePricesSlider('max');
+    });
 }
 
-function updateSlider(sliderType, updated) {
-    const minSlider = document.getElementById("slider1");
-    const maxSlider = document.getElementById("slider2");
+function updateAmountSlider(sliderType) {
+    const minSlider = document.getElementById("amt-slider1");
+    const maxSlider = document.getElementById("amt-slider2");
 
     var min = parseInt(minSlider.value);
     var max = parseInt(maxSlider.value);
 
-    if (sliderType === 'lower') {
+    if (sliderType === 'min') {
         if (min >= max) {
             minSlider.value = max;
             min = max;
@@ -271,15 +281,14 @@ function updateSlider(sliderType, updated) {
     let finalMin = min <= 64 ? min : (min > 64 ? 0 : 64) + (min - 64) * 64;
     let finalMax = max <= 64 ? max : (max > 64 ? 0 : 64) + (max - 64) * 64;
 
-    document.getElementById('slider-value').textContent = `Amount: ${finalMin}-${finalMax}`;
+    document.getElementById('amt-slider-value').textContent = `Amount: ${finalMin} - ${finalMax}`;
 
     const range = minSlider.max - minSlider.min;
     const minPercent = ((min - minSlider.min) / range) * 100;
     const maxPercent = ((max - maxSlider.min) / range) * 100;
 
-    slider1.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
+    minSlider.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
 
-    if (updated) {
         logs.amountFilterMin = finalMin;
         logs.amountFilterMax = finalMax;
 
@@ -289,7 +298,81 @@ function updateSlider(sliderType, updated) {
                 splitLogsByDate(logs.getAndFilter());
             }
         }, 2000);
+}
+
+function updatePricesSlider(sliderType) {
+    const minSlider = document.getElementById("price-slider1");
+    const maxSlider = document.getElementById("price-slider2");
+
+    var min = parseInt(minSlider.value);
+    var max = parseInt(maxSlider.value);
+
+    if (sliderType === 'min') {
+        if (min >= max) {
+            minSlider.value = max;
+            min = max;
+        }
+    } else {
+        if (max <= min) {
+            maxSlider.value = min;
+            max = min;
+        }
     }
+
+    let finalMin = pricesIncrement(min);
+    let finalMax = pricesIncrement(max);
+
+    document.getElementById('price-slider-value').textContent = `Price range: ${getFormatted(finalMin)}$ - ${getFormatted(finalMax)}$`;
+
+    const range = minSlider.max - minSlider.min;
+    const minPercent = ((min - minSlider.min) / range) * 100;
+    const maxPercent = ((max - maxSlider.min) / range) * 100;
+
+    minSlider.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
+
+    logs.pricesFilterMin = finalMin;
+    logs.pricesFilterMax = finalMax;
+
+    setTimeout(function () {
+        if (finalMin == logs.pricesFilterMin && finalMax == logs.pricesFilterMax) {
+            pages.innerHTML = '';
+            splitLogsByDate(logs.getAndFilter());
+        }
+    }, 2000);
+}
+
+function pricesIncrement(i) {
+    if (i == 0)
+        return 0;
+    
+    if (i <= 10) {
+        return i * 10; // Increments of 10 for n <= 10
+    } else {
+        // Calculate the power of ten based on how many ranges have passed
+        const range = Math.floor((i - 10) / 10);
+        const baseIncrement = Math.pow(10, range + 2); // 10^2 = 100, 10^3 = 1000, etc.
+        
+        // Calculate the increment for the current range
+        const incrementInCurrentRange = baseIncrement * ((i % 10) || 1); // Ensure at least 1 for increments
+        return baseIncrement + incrementInCurrentRange; // Base + Increment for the range
+    }
+}
+
+function getFormatted(i) {
+    if (i == 0)
+        return i;
+    // Define the suffixes for thousands, millions, billions, etc.
+    const suffixes = ["", "k", "M", "B", "T"];
+    // Determine the order of magnitude of the number
+    const order = Math.floor(Math.log10(Math.abs(i)) / 3);
+    // Determine the suffix based on the order of magnitude
+    const suffix = suffixes[order] || '';
+    // Calculate the short number by dividing the original number by 1000^order
+    const shortNumber = i / Math.pow(10, order * 3);
+    // Format the short number to one decimal place and add the suffix
+    return shortNumber % 1 === 0
+        ? shortNumber + suffix
+        : shortNumber.toFixed(1) + suffix;
 }
 
 function loadFilters() {
