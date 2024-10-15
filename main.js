@@ -257,6 +257,16 @@ function registerFilters() {
     document.getElementById("price-slider2").addEventListener("input", function () {
         updatePricesSlider('max');
     });
+
+    // Currency filter
+    const currencyFilter = document.getElementById('currency-filter');
+
+    currencyFilter.addEventListener('change', function (event) {
+        logs.currencyFilter = event.target.value;
+
+        pages.innerHTML = '';
+        splitLogsByDate(logs.getAndFilter());
+    });
 }
 
 function updateAmountSlider(sliderType) {
@@ -322,7 +332,7 @@ function updatePricesSlider(sliderType) {
     let finalMin = pricesIncrement(min);
     let finalMax = pricesIncrement(max);
 
-    document.getElementById('price-slider-value').textContent = `Price range: ${getFormatted(finalMin)}$ - ${getFormatted(finalMax)}$`;
+    document.getElementById('price-slider-value').textContent = `Price range: ${getFormatted(finalMin)} - ${getFormatted(finalMax)}`;
 
     const range = minSlider.max - minSlider.min;
     const minPercent = ((min - minSlider.min) / range) * 100;
@@ -376,6 +386,7 @@ function getFormatted(i) {
 }
 
 function loadFilters() {
+    // Player options
     const playerFilter = document.getElementById('player-filter');
 
     var players = '';
@@ -384,6 +395,7 @@ function loadFilters() {
     }
     playerFilter.innerHTML = players;
 
+    // Item options
     const itemFilter = document.getElementById('item-filter');
 
     var items = '';
@@ -400,6 +412,15 @@ function loadFilters() {
         }
     }
     itemFilter.innerHTML = items;
+
+    // Currency options
+    const currencyFilter = document.getElementById('currency-filter');
+
+    var currencies = '';
+    for (const p of logs.getCurrencys()) {
+        currencies += '<option value="' + p + '">' + p + '</option>';
+    }
+    currencyFilter.innerHTML = currencies;
 }
 
 /**

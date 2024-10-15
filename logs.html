@@ -297,9 +297,11 @@
                         <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
                             title="Click to toggle slider" class="filter-toggler" data-filter-type="amount"></img>
 
-                        <div class="slider-container" id="amount-slider-container" style="display: none; margin-top: 25px;">
+                        <div class="slider-container" id="amount-slider-container"
+                            style="display: none; margin-top: 25px;">
                             <div id="amt-slider-value">Amount: 0 - 4096</div>
-                            <input type="range" id="amt-slider1" class="slider1" min="1" max="128" value="1" style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
+                            <input type="range" id="amt-slider1" class="slider1" min="1" max="128" value="1"
+                                style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
                             <input type="range" id="amt-slider2" class="slider2" min="1" max="128" value="128">
                         </div>
                     </div>
@@ -347,10 +349,18 @@
                         <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
                             title="Click to toggle filter" class="filter-toggler" data-filter-type="price"></img>
 
-                        <div class="slider-container" id="price-slider-container" style="display: none; margin-top: 25px;">
-                            <div id="price-slider-value">Price range: 0$ - 1B$</div>
-                            <input type="range" id="price-slider1" class="slider1" min="0" max="109" value="0" style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
-                            <input type="range" id="price-slider2" class="slider2" min="0" max="109" value="109">
+                        <div class="slider-container" id="price-slider-container"
+                            style="display: none; margin-top: 25px;">
+                            <div id="currency-container" style="display: flex; margin-bottom: 10px;">
+                                <a style="margin-right: 10px;">Currency:</a>
+                                <select name="currencys" id="currency-filter" style="width: 40px;"></select>
+                            </div>
+                            <div id="price-container">
+                                <div id="price-slider-value">Price range: 0 - 1T</div>
+                                <input type="range" id="price-slider1" class="slider1" min="0" max="109" value="0"
+                                    style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
+                                <input type="range" id="price-slider2" class="slider2" min="0" max="109" value="109">
+                            </div>
                         </div>
                     </div>
                 </div>

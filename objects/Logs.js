@@ -15,6 +15,7 @@ export class Logs {
     itemFilter = "all";
     pricesFilterMin = 0;
     pricesFilterMax = 1000000000;
+    currencyFilter = 'ALL';
 
     /**
     * @param {Array<Object>} logs
@@ -45,6 +46,9 @@ export class Logs {
 
         if (this.pricesFilterMin != 0 || this.pricesFilterMax != 1000000000)
             filtered = filtered.filter(log => log.prices.some(price => price.amount >= this.pricesFilterMin && price.amount <= this.pricesFilterMax));
+
+        if (this.currencyFilter !== 'ALL')
+            filtered = filtered.filter(log => log.prices.some(price => price.ecoType === this.currencyFilter));
 
         return filtered;
     }
@@ -129,6 +133,14 @@ export class Logs {
         //sortedItems.forEach(s => console.log(s));
 
         return sortedItems;
+    }
+
+    getCurrencys() {
+        var arr = this.logs.flatMap(log => log.prices.flatMap(price => price.ecoType));
+        arr.sort();
+        arr.unshift("ALL");
+
+        return new Set(arr);
     }
 
     /**
