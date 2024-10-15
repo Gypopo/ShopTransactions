@@ -13,7 +13,7 @@ export class Logs {
     actionFilter = "BUY/SELL";
     methodFilter = "ALL";
     itemFilter = "all";
-    pricesFilterMin = 1;
+    pricesFilterMin = 0;
     pricesFilterMax = 1000000000;
 
     /**
@@ -41,7 +41,10 @@ export class Logs {
             filtered = filtered.filter(log => log.type === this.methodFilter);
 
         if (this.itemFilter !== 'all')
-            filtered = filtered.filter(log => (log instanceof MultipleTransaction ? log.items.filter(item => item.item) : log.item.item) === this.itemFilter);
+            filtered = filtered.filter(log => (log instanceof MultipleTransaction ? log.items.some(item => item.item === this.itemFilter) : log.item.item === this.itemFilter));
+
+        if (this.pricesFilterMin != 0 || this.pricesFilterMax != 1000000000)
+            filtered = filtered.filter(log => log.prices.some(price => price.amount >= this.pricesFilterMin && price.amount <= this.pricesFilterMax));
 
         return filtered;
     }

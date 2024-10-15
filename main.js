@@ -149,7 +149,7 @@ function customReviver(key, value) {
                     value.date,
                     new Player(value.player.name, value.player.uuid),
                     value.items.map(item => new MultipleItem(item.amount, item.name, item.item, item.mat)),
-                    value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
+                    value.prices.map(obj => new Price(obj.formatted, obj.ecoType, obj.amount)),
                     value.amount,
                     value.action,
                     value.type
@@ -159,7 +159,7 @@ function customReviver(key, value) {
                     value.date,
                     new Player(value.player.name, value.player.uuid),
                     new SingleItem(value.items.name, value.items.item, value.items.mat),
-                    value.prices.map(obj => new Price(obj.formatted, obj.ecoType)),
+                    value.prices.map(obj => new Price(obj.formatted, obj.ecoType, obj.amount)),
                     value.amount,
                     value.action,
                     value.type
