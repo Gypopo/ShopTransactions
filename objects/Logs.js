@@ -5,6 +5,7 @@ export class Logs {
 
     logs;
     dates;
+    lastResults; // Log results of previous actions
 
     // Active filters
     playerFilter = "all";
@@ -50,14 +51,14 @@ export class Logs {
         if (this.currencyFilter !== 'ALL')
             filtered = filtered.filter(log => log.prices.some(price => price.ecoType === this.currencyFilter));
 
-        return filtered;
+        return this.lastResults = filtered;
     }
 
     /**
      * @return {Array<Object>}
      */
     get() {
-        return this.logs;
+        return this.lastResults = this.logs;
     }
 
     /**

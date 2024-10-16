@@ -63,6 +63,30 @@ var timeOffset = new Date().getTimezoneOffset() * 60 * 1000;
 async function completeLoading() {
     loadFilters();
     registerFilters();
+    const logsListener = document.getElementById('logs');
+
+// Add a one central click event to the parent to listern for log clicks
+logsListener.addEventListener('click', function(event) {
+    const log = event.target.closest('.log-container');
+    if (log) {
+        const overlay = document.createElement('div');
+        overlay.className = 'detail-overlay';
+
+        const detailMSG = document.createElement('div');
+        detailMSG.className = 'detail-message';
+        detailMSG.innerHTML = getTransactionMessage(logs.lastResults[log.dataset.index]);
+        setView(detailMSG);
+        overlay.appendChild(detailMSG);
+
+        overlay.addEventListener("click", function (e) {
+            if (e.target == overlay) {
+                document.body.removeChild(overlay);
+            }
+        });
+
+        document.body.appendChild(overlay);
+    }
+});
     //var page = createPage(1);
 
     var loader = document.getElementById('loader')
@@ -77,6 +101,7 @@ async function splitLogsByDate(logs) {
     today.setHours(12, 0, 0, 0);
     var prevDate = today.getTime() - timeOffset;
 
+    var i = 0;
     var title = false;
     for (var log of logs) {
         var date = log.date - timeOffset;
@@ -96,6 +121,7 @@ async function splitLogsByDate(logs) {
                 }
 
                 var ele = await createLog(log);
+                ele.dataset.index = i;
                 pages.appendChild(ele);
             } else {
                 const dayDiff = Math.floor((prevDate - date) / oneDay); // The amount of full days which passed without transactions
@@ -115,9 +141,12 @@ async function splitLogsByDate(logs) {
                 }
 
                 var ele = await createLog(log);
+                ele.dataset.index = i;
                 pages.appendChild(ele);
             }
         }
+
+        i++;
     }
 
     updateCounter(logs.length);
@@ -188,7 +217,7 @@ function registerFilters() {
         splitLogsByDate(logs.getAndFilter());
     });
 
-    // Amount filter toggler
+    // Filter toggler
     const filterTogglers = document.querySelectorAll('.filter-toggler');
     filterTogglers.forEach(toggler => {
         console.log(toggler.dataset.filterType)
@@ -629,10 +658,17 @@ async function setTexture(div, uuid) {
 function getTransactionMessage(log) {
     var transactionMSG;
     if (log instanceof MultipleTransaction) {
-        transactionMSG = log.uuid + ' ' + TransactionMode[log.action] + ' ' + log.getItems() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
+        transactionMSG = log.player.name + ' ' + TransactionMode[log.action] + ' ' + log.getItems() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
     } else if (log instanceof SingleTransaction) {
-        transactionMSG = log.uuid + ' ' + TransactionMode[log.action] + ' ' + log.amount + ' x ' + log.getItems() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
+        transactionMSG = log.player.name + ' ' + TransactionMode[log.action] + ' ' + log.amount + ' x ' + log.getItemsWithoutAmount() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
     }
 
     return transactionMSG;
+}
+
+// Displays the div at the current scrollheight so the user can see it
+function setView(div) {
+    var scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    var pos = (window.innerHeight - div.offsetHeight) / 2 + scrollPosition;
+    div.style.top = pos + 'px';
 }
