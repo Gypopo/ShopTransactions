@@ -119,6 +119,13 @@ async function splitLogsByDate(logs) {
             }
         }
     }
+
+    updateCounter(logs.length);
+}
+
+function updateCounter(length) {
+    const counter = document.getElementById('log-count');
+    counter.innerHTML = 'Showing <a style="color: rgb(0, 255, 0);"><stong>' + length + '<stong></a> log(s)'
 }
 
 function formatDate(date) {
@@ -356,30 +363,25 @@ function pricesIncrement(i) {
         return 0;
     
     if (i <= 10) {
-        return i * 10; // Increments of 10 for n <= 10
+        return i * 10;
     } else {
-        // Calculate the power of ten based on how many ranges have passed
         const range = Math.floor((i - 10) / 10);
-        const baseIncrement = Math.pow(10, range + 2); // 10^2 = 100, 10^3 = 1000, etc.
+        const baseIncrement = Math.pow(10, range + 2);
         
-        // Calculate the increment for the current range
-        const incrementInCurrentRange = baseIncrement * ((i % 10) || 1); // Ensure at least 1 for increments
-        return baseIncrement + incrementInCurrentRange; // Base + Increment for the range
+        const incrementInCurrentRange = baseIncrement * ((i % 10) || 1);
+        return baseIncrement + incrementInCurrentRange;
     }
 }
 
 function getFormatted(i) {
     if (i == 0)
         return i;
-    // Define the suffixes for thousands, millions, billions, etc.
+
     const suffixes = ["", "k", "M", "B", "T"];
-    // Determine the order of magnitude of the number
     const order = Math.floor(Math.log10(Math.abs(i)) / 3);
-    // Determine the suffix based on the order of magnitude
     const suffix = suffixes[order] || '';
-    // Calculate the short number by dividing the original number by 1000^order
     const shortNumber = i / Math.pow(10, order * 3);
-    // Format the short number to one decimal place and add the suffix
+
     return shortNumber % 1 === 0
         ? shortNumber + suffix
         : shortNumber.toFixed(1) + suffix;

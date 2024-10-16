@@ -164,4 +164,8 @@ export class Logs {
         }
         return logs;
     }
+
+    getSize() {
+        return this.logs.length;
+    }
 }
