@@ -5,7 +5,7 @@ export const TransactionType = {
     SELL_SCREEN: 'sell screen',
     BUY_SCREEN: 'buy screen',
     BUY_STACKS_SCREEN: 'buy stacks screen',
-    QUICK_SELL: 'quick sell',
-    QUICK_BUY: 'quick buy',
+    QUICK_SELL: 'quick sell option',
+    QUICK_BUY: 'quick buy option',
     AUTO_SELL_CHEST: 'AutoSellChest'
 }
