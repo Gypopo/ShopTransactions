@@ -89,13 +89,16 @@ logsListener.addEventListener('click', function(event) {
 });
     //var page = createPage(1);
 
-    var loader = document.getElementById('loader')
-    loader.remove();
+    splitLogsByDate(logs.get()).then(arr => {
+        var loader = document.getElementById('loader')
+        loader.remove();
 
-    splitLogsByDate(logs.get());
+        arr.forEach(e => pages.appendChild(e));
+    });
 }
 
 async function splitLogsByDate(logs) {
+    var arr = [];
     const oneDay = 86400000;
     var today = new Date();
     today.setHours(12, 0, 0, 0);
@@ -115,14 +118,14 @@ async function splitLogsByDate(logs) {
                     container.className = 'time-container';
 
                     container.innerHTML = formatted + '<hr style="border: 2px solid black; background-color: black;">';
-                    pages.appendChild(container);
+                    arr.push(container);
 
                     title = true;
                 }
 
                 var ele = await createLog(log);
                 ele.dataset.index = i;
-                pages.appendChild(ele);
+                arr.push(ele);
             } else {
                 const dayDiff = Math.floor((prevDate - date) / oneDay); // The amount of full days which passed without transactions
                 today.setDate(today.getDate() - dayDiff);
@@ -135,21 +138,22 @@ async function splitLogsByDate(logs) {
                     container.className = 'time-container';
 
                     container.innerHTML = formatted + '<div class="seperator"><hr style="border: 2px solid black; background-color: black;"></div>';
-                    pages.appendChild(container);
+                    arr.push(container);
 
                     title = true;
                 }
 
                 var ele = await createLog(log);
                 ele.dataset.index = i;
-                pages.appendChild(ele);
+                arr.push(ele);
             }
         }
 
         i++;
     }
 
-    updateCounter(logs.length);
+    updateCounter(i);
+    return Promise.resolve(arr);
 }
 
 function updateCounter(length) {
@@ -214,7 +218,8 @@ function registerFilters() {
         logs.playerFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter());
+        splitLogsByDate(logs.getAndFilter())
+            .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
     // Filter toggler
@@ -262,7 +267,8 @@ function registerFilters() {
         logs.actionFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter());
+        splitLogsByDate(logs.getAndFilter())
+            .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
     // Method filter
@@ -272,7 +278,8 @@ function registerFilters() {
         logs.methodFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter());
+        splitLogsByDate(logs.getAndFilter())
+            .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
     // Item filter
@@ -282,7 +289,8 @@ function registerFilters() {
         logs.itemFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter());
+        splitLogsByDate(logs.getAndFilter())
+            .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
     // Prices filter
@@ -301,7 +309,8 @@ function registerFilters() {
         logs.currencyFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter());
+        splitLogsByDate(logs.getAndFilter())
+            .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 }
 
@@ -341,7 +350,8 @@ function updateAmountSlider(sliderType) {
         setTimeout(function () {
             if (finalMin == logs.amountFilterMin && finalMax == logs.amountFilterMax) {
                 pages.innerHTML = '';
-                splitLogsByDate(logs.getAndFilter());
+                splitLogsByDate(logs.getAndFilter())
+                    .then(arr => arr.forEach(e => pages.appendChild(e)));
             }
         }, 2000);
 }
@@ -382,7 +392,8 @@ function updatePricesSlider(sliderType) {
     setTimeout(function () {
         if (finalMin == logs.pricesFilterMin && finalMax == logs.pricesFilterMax) {
             pages.innerHTML = '';
-            splitLogsByDate(logs.getAndFilter());
+            splitLogsByDate(logs.getAndFilter())
+                .then(arr => arr.forEach(e => pages.appendChild(e)));
         }
     }, 2000);
 }
