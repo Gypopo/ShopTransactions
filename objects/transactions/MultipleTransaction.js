@@ -60,7 +60,7 @@ export class MultipleTransaction {
         for (var price of this.prices) {
             msg += '<div style="display: inline-block;" title="' + price.ecoType.replace(/"/g, '&quot;') + '">' + price.formatted + '</div>';
 
-            console.log('<a title="' + price.ecoType.replace('\"', '\\"') + '">' + price.formatted + '</a>');
+            //console.log('<a title="' + price.ecoType.replace('\"', '\\"') + '">' + price.formatted + '</a>');
 
             if (i != this.prices.length-1) msg += ", ";
             i++;

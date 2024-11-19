@@ -1,5 +1,4 @@
 import { API } from "./api.js";
-import { LogsProvider } from "./LogsProvider.js";
 import { Nav } from "./nav.js";
 import { Stats } from "./objects/Stats.js";
 import { GeneralStats } from "./objects/stats/GeneralStats.js";
