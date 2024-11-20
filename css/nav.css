@@ -1,9 +1,7 @@
-/* Style the header with a grey background and some padding */
 .header {
     overflow: hidden;
     background-color: #333;
     padding: 12px;
-    margin-bottom: 1%;
 }
 
 .header-content {
@@ -26,6 +24,7 @@
     line-height: 25px;
     border-radius: 4px;
     padding: 5px 10px;
+    cursor: pointer;
 }
 
 .nav-item:hover {

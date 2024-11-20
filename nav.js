@@ -17,9 +17,9 @@ export class Nav {
             return;
 
         if (id != null) {
-            window.location.href = 'http://127.0.0.1:5500' + link + '?id=' + id;
+            window.location.href = 'https://logs.gpplugins.com' + link + '?id=' + id;
         } else {
-            window.location.href = 'http://127.0.0.1:5500' + link;
+            window.location.href = 'https://logs.gpplugins.com' + link;
         }
     }
 
