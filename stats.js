@@ -21,10 +21,12 @@ async function init() {
     if (params.has("id")) {
         try {
             var exported = await api.getExported(params.get('id'));
-            var raw = JSON.stringify(exported.stats);
+            if (exported != null) {
+                var raw = JSON.stringify(exported.stats);
 
-            stats = new Stats(JSON.parse(raw));
-            completeLoading();
+                stats = new Stats(JSON.parse(raw));
+                completeLoading();
+            } else alert('Log ID not found or expired, check the link and try again');
         } catch (e) {
             if (e.name === 'AbortError') {
                 alert('A timeout exception occured while trying to reach the backend server, please report this issue to: https://discord.gpplugins.com');

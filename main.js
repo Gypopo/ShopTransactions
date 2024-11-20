@@ -13,7 +13,7 @@ import { Price } from "./objects/Price.js";
 var pages = document.getElementById('logs');
 var api = new API();
 var nav = new Nav();
-var logManager = new LogManager(); 
+var logManager = new LogManager();
 
 init();
 
@@ -24,13 +24,16 @@ async function init() {
     if (params.has("id")) {
         try {
             var exported = await api.getExported(params.get('id'));
-            var raw = JSON.stringify(exported.logs);
+            if (exported != null) {
+                var raw = JSON.stringify(exported.logs);
+                logManager.init(JSON.parse(raw, customReviver), null, api);
 
-            logManager.init(JSON.parse(raw, customReviver), null, api);
-
-            completeLoading();
+                completeLoading();
+            } else alert('Log ID not found or expired, check the link and try again');
         } catch (e) {
-            if (e.name === 'AbortError') {
+            if (e.name.includes('404')) {
+                alert('Log ID not found or expired, check the link and try again');
+            } else if (e.name === 'AbortError') {
                 alert('A timeout exception occured while trying to reach the backend server, please report this issue to: https://discord.gpplugins.com');
             } else {
                 alert('It looks like there was an error while trying to load this page, please report this to our discord at: https://discord.gpplugins.com');
@@ -62,28 +65,28 @@ async function completeLoading() {
     registerFilters();
     const logsListener = document.getElementById('logs');
 
-// Add a one central click event to the parent to listern for log clicks
-logsListener.addEventListener('click', function(event) {
-    const log = event.target.closest('.log-container');
-    if (log) {
-        const overlay = document.createElement('div');
-        overlay.className = 'detail-overlay';
+    // Add a one central click event to the parent to listern for log clicks
+    logsListener.addEventListener('click', function (event) {
+        const log = event.target.closest('.log-container');
+        if (log) {
+            const overlay = document.createElement('div');
+            overlay.className = 'detail-overlay';
 
-        const detailMSG = document.createElement('div');
-        detailMSG.className = 'detail-message';
-        detailMSG.innerHTML = getTransactionMessage(logManager.get().lastResults[log.dataset.index]);
-        setView(detailMSG);
-        overlay.appendChild(detailMSG);
+            const detailMSG = document.createElement('div');
+            detailMSG.className = 'detail-message';
+            detailMSG.innerHTML = getTransactionMessage(logManager.get().lastResults[log.dataset.index]);
+            setView(detailMSG);
+            overlay.appendChild(detailMSG);
 
-        overlay.addEventListener("click", function (e) {
-            if (e.target == overlay) {
-                document.body.removeChild(overlay);
-            }
-        });
+            overlay.addEventListener("click", function (e) {
+                if (e.target == overlay) {
+                    document.body.removeChild(overlay);
+                }
+            });
 
-        document.body.appendChild(overlay);
-    }
-});
+            document.body.appendChild(overlay);
+        }
+    });
     //var page = createPage(1);
 
     logManager.getNextPage().then(arr => {
@@ -258,16 +261,16 @@ function updateAmountSlider(sliderType) {
 
     minSlider.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
 
-        logManager.get().amountFilterMin = finalMin;
-        logManager.get().amountFilterMax = finalMax;
+    logManager.get().amountFilterMin = finalMin;
+    logManager.get().amountFilterMax = finalMax;
 
-        setTimeout(function () {
-            if (finalMin == logManager.get().amountFilterMin && finalMax == logManager.get().amountFilterMax) {
-                pages.innerHTML = '';
-                logManager.getNextPageAndFilter()
-                    .then(arr => arr.forEach(e => pages.appendChild(e)));
-            }
-        }, 2000);
+    setTimeout(function () {
+        if (finalMin == logManager.get().amountFilterMin && finalMax == logManager.get().amountFilterMax) {
+            pages.innerHTML = '';
+            logManager.getNextPageAndFilter()
+                .then(arr => arr.forEach(e => pages.appendChild(e)));
+        }
+    }, 2000);
 }
 
 function updatePricesSlider(sliderType) {
@@ -315,13 +318,13 @@ function updatePricesSlider(sliderType) {
 function pricesIncrement(i) {
     if (i == 0)
         return 0;
-    
+
     if (i <= 10) {
         return i * 10;
     } else {
         const range = Math.floor((i - 10) / 10);
         const baseIncrement = Math.pow(10, range + 2);
-        
+
         const incrementInCurrentRange = baseIncrement * ((i % 10) || 1);
         return baseIncrement + incrementInCurrentRange;
     }

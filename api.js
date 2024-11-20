@@ -16,6 +16,9 @@ export class API {
       timeout: 15000
     });
 
+    if (response.status == 404)
+      return null;
+
     var raw = await response.text();
     var json = JSON.parse(raw);
 
