@@ -54,7 +54,7 @@ export class LogManager {
         var i = 0;
         var title = false;
         while (i < fakePageSize && this.lastIndex < logs.length) {
-            var log = logs.at(this.lastIndex++);
+            var log = logs.at(this.lastIndex);
             var date = log.date - this.timeOffset;
     
             // Check if the log is from today or a previous day
@@ -105,17 +105,42 @@ export class LogManager {
                 }
             }
     
+            this.lastIndex++;
             i++;
         }
     
         console.log(this.lastIndex)
         this.updateCounter(this.lastIndex, logs.length);
+        this.renderPlayerHeadsAsync(arr);
+
+        if (this.lastIndex != logs.length)
+            arr.push(this.getMoreButton());
         return Promise.resolve(arr);
     }
     
     updateCounter(displayed, length) {
         const counter = document.getElementById('log-count');
         counter.innerHTML = 'Showing <a style="color: rgb(0, 255, 0);"><stong>' + displayed + '<stong></a> out of ' + length + " log(s)";
+    }
+
+    getMoreButton() {
+        var button = document.createElement('div');
+        button.className = 'more-button';
+        button.id = 'more-button';
+        button.innerHTML = '<strong>Load more</strong>';
+        var instance = this;
+
+        button.addEventListener('click', function (event) {
+            var pages = document.getElementById('logs');
+    
+            instance.splitLogsByDate(instance.get().lastResults)
+                .then(arr => {
+                    button.remove();
+                    arr.forEach(e => pages.appendChild(e));
+                });
+        });
+
+        return button;
     }
     
     formatDate(date) {
@@ -228,6 +253,19 @@ export class LogManager {
         }
     
         return texture;
+    }
+
+    renderPlayerHeadsAsync(arr) {
+        // Much better performance by rendering the textures async AFTER all logs have been created
+        setTimeout(async () => {
+            for(var e of arr) {
+                if (e.className !== 'log-container')
+                    continue;
+
+                var texture = await this.getTexture(e.dataset.uuid);
+                e.querySelector('.avatar').src = texture;
+            }
+        }, 0);
     }
 
     getPageSize() {
