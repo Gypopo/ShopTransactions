@@ -1,4 +1,5 @@
 import { SingleItem } from "../items/SingleItem.js";
+import { LogManager } from "/logManager.js";
 import { Player } from "../Player.js";
 import { Price } from "../Price.js";
 
@@ -40,11 +41,11 @@ export class SingleTransaction {
      * @returns {string}
      */
     getItems() {
-        return '<div class="rc-item rc-minecraft_' + (this.item.mat == undefined ? 'unknown' : this.item.mat.toLowerCase()) + '" title="' + this.item.mat + '" style="display: inline-block; vertical-align: top; width: 20px; height: 20px"></div>&nbsp;<div style="display: inline-block; vertical-align: top;" title=' + this.item.item + '>' + this.amount + 'x&nbsp;' + this.item.name + '</div>';
+        return '<div class="rc-item rc-minecraft_' + (this.item.mat == undefined ? 'unknown' : this.item.mat.toLowerCase()) + '" title="' + this.item.mat + '" style="display: inline-block; vertical-align: top; width: 20px; height: 20px"></div>&nbsp;<div class="log-text" style="display: inline-block; vertical-align: top;" title=' + this.item.item + '>' + (LogManager.AMOUNT ? this.amount + 'x&nbsp;' : '') + this.item.name + '</div>';
     }
 
     getItemsWithoutAmount() {
-        return '<div class="rc-item rc-minecraft_' + (this.item.mat == undefined ? 'unknown' : this.item.mat.toLowerCase()) + '" title="' + this.item.mat + '" style="display: inline-block; vertical-align: top; width: 20px; height: 20px"></div>&nbsp;<div style="display: inline-block; vertical-align: top;" title=' + this.item.item + '>' + this.item.name + '</div>';
+        return '<div class="rc-item rc-minecraft_' + (this.item.mat == undefined ? 'unknown' : this.item.mat.toLowerCase()) + '" title="' + this.item.mat + '" style="display: inline-block; vertical-align: top; width: 20px; height: 20px"></div>&nbsp;<div class="log-text" style="display: inline-block; vertical-align: top;" title=' + this.item.item + '>' + this.item.name + '</div>';
     }
 
     /**

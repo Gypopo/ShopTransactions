@@ -1,5 +1,5 @@
 import { API } from "./api.js";
-import { Logs } from "./objects/Logs.js";
+import { LogManager } from "./logManager.js";
 import { TransactionMode } from "./objects/TransactionMode.js";
 import { TransactionType } from "./objects/TransactionType.js";
 import { MultipleTransaction } from "./objects/transactions/MultipleTransaction.js";
@@ -13,8 +13,7 @@ import { Price } from "./objects/Price.js";
 var pages = document.getElementById('logs');
 var api = new API();
 var nav = new Nav();
-var logs = new Logs();
-var cached_textures = new Map();
+var logManager = new LogManager(); 
 
 init();
 
@@ -27,7 +26,7 @@ async function init() {
             var exported = await api.getExported(params.get('id'));
             var raw = JSON.stringify(exported.logs);
 
-            logs.init(JSON.parse(raw, customReviver));
+            logManager.init(JSON.parse(raw, customReviver), null, api);
 
             completeLoading();
         } catch (e) {
@@ -58,8 +57,6 @@ function setLoading() {
     loading = true;
 }
 
-var timeOffset = new Date().getTimezoneOffset() * 60 * 1000;
-
 async function completeLoading() {
     loadFilters();
     registerFilters();
@@ -74,7 +71,7 @@ logsListener.addEventListener('click', function(event) {
 
         const detailMSG = document.createElement('div');
         detailMSG.className = 'detail-message';
-        detailMSG.innerHTML = getTransactionMessage(logs.lastResults[log.dataset.index]);
+        detailMSG.innerHTML = getTransactionMessage(logManager.get().lastResults[log.dataset.index]);
         setView(detailMSG);
         overlay.appendChild(detailMSG);
 
@@ -89,95 +86,12 @@ logsListener.addEventListener('click', function(event) {
 });
     //var page = createPage(1);
 
-    splitLogsByDate(logs.get()).then(arr => {
+    logManager.getNextPage().then(arr => {
         var loader = document.getElementById('loader')
         loader.remove();
 
         arr.forEach(e => pages.appendChild(e));
     });
-}
-
-async function splitLogsByDate(logs) {
-    var arr = [];
-    const oneDay = 86400000;
-    var today = new Date();
-    today.setHours(12, 0, 0, 0);
-    var prevDate = today.getTime() - timeOffset;
-
-    var i = 0;
-    var title = false;
-    for (var log of logs) {
-        var date = log.date - timeOffset;
-
-        // Check if the log is from today or a previous day
-        if (date <= prevDate) {
-            if (date > (prevDate - oneDay)) {
-                if (!title) {
-                    var formatted = formatDate(today);
-                    var container = document.createElement('div');
-                    container.className = 'time-container';
-
-                    container.innerHTML = formatted + '<hr style="border: 2px solid black; background-color: black;">';
-                    arr.push(container);
-
-                    title = true;
-                }
-
-                var ele = await createLog(log);
-                ele.dataset.index = i;
-                arr.push(ele);
-            } else {
-                const dayDiff = Math.floor((prevDate - date) / oneDay); // The amount of full days which passed without transactions
-                today.setDate(today.getDate() - dayDiff);
-                prevDate = today.getTime() - timeOffset;
-                title = false;
-
-                if (!title) {
-                    var formatted = formatDate(today);
-                    var container = document.createElement('div');
-                    container.className = 'time-container';
-
-                    container.innerHTML = formatted + '<div class="seperator"><hr style="border: 2px solid black; background-color: black;"></div>';
-                    arr.push(container);
-
-                    title = true;
-                }
-
-                var ele = await createLog(log);
-                ele.dataset.index = i;
-                arr.push(ele);
-            }
-        }
-
-        i++;
-    }
-
-    updateCounter(i);
-    return Promise.resolve(arr);
-}
-
-function updateCounter(length) {
-    const counter = document.getElementById('log-count');
-    counter.innerHTML = 'Showing <a style="color: rgb(0, 255, 0);"><stong>' + length + '<stong></a> log(s)'
-}
-
-function formatDate(date) {
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
-
-    const formatStrippedDate = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-    if (formatStrippedDate(date).getTime() === formatStrippedDate(today).getTime()) {
-        return "Today";
-    }
-    else if (formatStrippedDate(date).getTime() === formatStrippedDate(yesterday).getTime()) {
-        return "Yesterday";
-    }
-    else {
-        const options = { weekday: 'long', day: 'numeric', month: 'long' };
-        return date.toLocaleDateString(undefined, options);
-    }
 }
 
 function customReviver(key, value) {
@@ -215,10 +129,10 @@ function registerFilters() {
     const playerFilter = document.getElementById('player-filter');
 
     playerFilter.addEventListener('change', function (event) {
-        logs.playerFilter = event.target.value;
+        logManager.get().playerFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter())
+        logManager.getNextPageAndFilter()
             .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
@@ -264,10 +178,10 @@ function registerFilters() {
     const actionFilter = document.getElementById('action-filter');
 
     actionFilter.addEventListener('change', function (event) {
-        logs.actionFilter = event.target.value;
+        logManager.get().actionFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter())
+        logManager.getNextPageAndFilter()
             .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
@@ -275,10 +189,10 @@ function registerFilters() {
     const methodFilter = document.getElementById('method-filter');
 
     methodFilter.addEventListener('change', function (event) {
-        logs.methodFilter = event.target.value;
+        logManager.get().methodFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter())
+        logManager.getNextPageAndFilter()
             .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
@@ -286,10 +200,10 @@ function registerFilters() {
     const itemFilter = document.getElementById('item-filter');
 
     itemFilter.addEventListener('change', function (event) {
-        logs.itemFilter = event.target.value;
+        logManager.get().itemFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter())
+        logManager.getNextPageAndFilter()
             .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 
@@ -306,10 +220,10 @@ function registerFilters() {
     const currencyFilter = document.getElementById('currency-filter');
 
     currencyFilter.addEventListener('change', function (event) {
-        logs.currencyFilter = event.target.value;
+        logManager.get().currencyFilter = event.target.value;
 
         pages.innerHTML = '';
-        splitLogsByDate(logs.getAndFilter())
+        logManager.getNextPageAndFilter()
             .then(arr => arr.forEach(e => pages.appendChild(e)));
     });
 }
@@ -344,13 +258,13 @@ function updateAmountSlider(sliderType) {
 
     minSlider.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
 
-        logs.amountFilterMin = finalMin;
-        logs.amountFilterMax = finalMax;
+        logManager.get().amountFilterMin = finalMin;
+        logManager.get().amountFilterMax = finalMax;
 
         setTimeout(function () {
-            if (finalMin == logs.amountFilterMin && finalMax == logs.amountFilterMax) {
+            if (finalMin == logManager.get().amountFilterMin && finalMax == logManager.get().amountFilterMax) {
                 pages.innerHTML = '';
-                splitLogsByDate(logs.getAndFilter())
+                logManager.getNextPageAndFilter()
                     .then(arr => arr.forEach(e => pages.appendChild(e)));
             }
         }, 2000);
@@ -386,13 +300,13 @@ function updatePricesSlider(sliderType) {
 
     minSlider.style.background = `linear-gradient(to right, #ccc ${minPercent}%, blue ${minPercent}%, blue ${maxPercent}%, #ccc ${maxPercent}%)`;
 
-    logs.pricesFilterMin = finalMin;
-    logs.pricesFilterMax = finalMax;
+    logManager.get().pricesFilterMin = finalMin;
+    logManager.get().pricesFilterMax = finalMax;
 
     setTimeout(function () {
-        if (finalMin == logs.pricesFilterMin && finalMax == logs.pricesFilterMax) {
+        if (finalMin == logManager.get().pricesFilterMin && finalMax == logManager.get().pricesFilterMax) {
             pages.innerHTML = '';
-            splitLogsByDate(logs.getAndFilter())
+            logManager.getNextPageAndFilter()
                 .then(arr => arr.forEach(e => pages.appendChild(e)));
         }
     }, 2000);
@@ -432,7 +346,7 @@ function loadFilters() {
     const playerFilter = document.getElementById('player-filter');
 
     var players = '';
-    for (const p of logs.getPlayers()) {
+    for (const p of logManager.get().getPlayers()) {
         players += '<option value="' + p + '">' + p + '</option>';
     }
     playerFilter.innerHTML = players;
@@ -442,7 +356,7 @@ function loadFilters() {
 
     var items = '';
     var s = 0;
-    for (let [key, value] of logs.getItems()) {
+    for (let [key, value] of logManager.get().getItems()) {
         if (!key.includes('.') && key !== "all") {
             if (s != 0)
                 items += '</optgroup>';
@@ -459,211 +373,10 @@ function loadFilters() {
     const currencyFilter = document.getElementById('currency-filter');
 
     var currencies = '';
-    for (const p of logs.getCurrencys()) {
+    for (const p of logManager.get().getCurrencys()) {
         currencies += '<option value="' + p + '">' + p + '</option>';
     }
     currencyFilter.innerHTML = currencies;
-}
-
-/**
- * @param {Number} i
- * @returns {HTMLElement}
- */
-function createPage(i) {
-    var page = document.createElement('div');
-    page.className = 'page';
-    page.id = 'page' + i;
-
-    logs.getAll().forEach(log => {
-        //console.log(id);
-        //console.log(id);
-        page.appendChild(cardhelper.createCard(id, card));
-    });
-
-    return page;
-}
-
-/**
- * @param {Object} log
- * @returns {HTMLElement}
- */
-/*
-function createLog(log) {
-    var container = document.createElement('div');
-    container.className = 'log-container';
-    //container.id = 'page' + i;
-
-    var avatarFrame = document.createElement('div');
-    avatarFrame.className = 'icon-frame';
-
-    var avatar = document.createElement('img');
-    avatar.style.height = '100%';
-    avatar.src = 'https://api.creepernation.net/avatar/' + log.player.uuid;
-    avatarFrame.appendChild(avatar);
-
-    var column = '<div class="log-item"></div>';
-
-    var contentTop = document.createElement('div');
-    contentTop.className = 'log-content-top';
-
-    var contentBottom = document.createElement('div');
-    contentBottom.className = 'log-content-bottom';
-
-    var userObj = document.createElement('div');
-    userObj.className = 'log-item-user';
-    userObj.innerHTML = 'Player: ' + log.player.name + " ";
-    //userObj.appendChild(avatarFrame);
-
-    var quantityObj = document.createElement('div');
-    quantityObj.className = 'log-item-quantity';
-    quantityObj.innerHTML = 'Amount: ' + log.amount;
-
-    var actionObj = document.createElement('div');
-    actionObj.className = 'log-item-action';
-    actionObj.innerHTML = 'Action: ' + log.action;
-
-    var typeObj = document.createElement('div');
-    typeObj.className = 'log-item-type';
-    typeObj.innerHTML = 'Method: ' + log.type;
-
-    var itemsObj = document.createElement('div');
-    itemsObj.className = 'log-item-items';
-    itemsObj.innerHTML = 'Items: ' + log.getItems();
-
-    var pricesObj = document.createElement('div');
-    pricesObj.className = 'log-item-prices';
-    pricesObj.innerHTML = 'Prices: ' + log.getItems();
-
-
-    var gap = '<div></div>';
-
-    contentTop.appendChild(userObj);
-    contentTop.innerHTML = contentTop.innerHTML + gap;
-    contentTop.appendChild(quantityObj);
-    contentTop.innerHTML = contentTop.innerHTML + gap;
-    contentTop.appendChild(actionObj);
-    contentTop.innerHTML = contentTop.innerHTML + gap;
-    contentTop.appendChild(typeObj);
-
-    contentBottom.innerHTML = contentBottom.innerHTML + gap;
-    contentBottom.appendChild(itemsObj);
-    contentBottom.innerHTML = contentBottom.innerHTML + gap;
-    contentBottom.innerHTML = contentBottom.innerHTML + gap;
-    contentBottom.innerHTML = contentBottom.innerHTML + gap;
-    contentBottom.appendChild(pricesObj);
-    contentBottom.innerHTML = contentBottom.innerHTML + gap;
-
-    container.appendChild(contentTop);
-    container.appendChild(contentBottom);
-
-    //container.innerHTML = container.innerHTML + getTransactionMessage(log);
-
-    return container;
-}
-    */
-
-/**
- * @param {Object} log
- * @returns {HTMLElement}
- */
-async function createLog(log) {
-    var container = document.createElement('div');
-    container.className = 'log-container';
-    //container.id = 'page' + i;
-
-    var contentTop = document.createElement('div');
-    contentTop.className = 'log-content';
-
-    // Player avatar
-    var avatarFrame = document.createElement('div');
-    avatarFrame.className = 'icon-frame';
-
-    var avatar = document.createElement('img');
-    avatar.style.height = '100%';
-    //avatar.src = 'https://api.creepernation.net/avatar/' + log.player.uuid;
-    var texture = await getTexture(log.player.uuid);
-    avatar.src = texture;
-    avatarFrame.appendChild(avatar);
-
-    // Transaction owner
-    var userItem = document.createElement('div');
-    userItem.className = 'log-item';
-    var userObj = document.createElement('div');
-    userObj.className = 'log-text log-item-user';
-    userObj.appendChild(avatarFrame);
-    userObj.innerHTML = userObj.innerHTML + '&nbsp;' + log.player.name;
-    userItem.appendChild(userObj);
-
-    // Transaction Amount
-    var quantityItem = document.createElement('div');
-    quantityItem.className = 'log-item';
-    var quantityObj = document.createElement('div');
-    quantityObj.className = 'log-text log-item-quantity';
-    quantityObj.innerHTML = log.amount;
-    quantityItem.appendChild(quantityObj);
-
-    // Transaction type
-    var actionItem = document.createElement('div');
-    actionItem.className = 'log-item';
-    var actionObj = document.createElement('div');
-    actionObj.className = 'log-text log-item-action';
-    actionObj.innerHTML = log.action;
-    actionItem.appendChild(actionObj);
-
-    // Transaction Type
-    var typeItem = document.createElement('div');
-    typeItem.className = 'log-item';
-    var typeObj = document.createElement('div');
-    typeObj.className = 'log-text log-item-type';
-    typeObj.innerHTML = log.type;
-    typeItem.appendChild(typeObj);
-
-    // Transaction item(s)
-    var itemsItem = document.createElement('div');
-    itemsItem.className = 'log-item';
-    var itemsObj = document.createElement('div');
-    itemsObj.className = 'log-text log-item-items';
-    itemsObj.innerHTML = log.getItems();
-    itemsItem.appendChild(itemsObj);
-
-    // Transaction price(s)
-    var pricesItem = document.createElement('div');
-    pricesItem.className = 'log-item';
-    var pricesObj = document.createElement('div');
-    pricesObj.className = 'log-text log-item-prices';
-    pricesObj.innerHTML = log.getPrices();
-    pricesItem.appendChild(pricesObj);
-
-    contentTop.appendChild(userItem);
-    contentTop.appendChild(quantityItem);
-    contentTop.appendChild(actionItem);
-    contentTop.appendChild(typeItem);
-
-    contentTop.appendChild(itemsItem);
-    contentTop.appendChild(pricesItem);
-
-    container.appendChild(contentTop);
-
-    //container.style.title = container.innerHTML + getTransactionMessage(log);
-
-    return container;
-}
-
-async function getTexture(uuid) {
-    var texture = cached_textures.get(uuid);
-    if (!texture) {
-        texture = 'null'/*await api.getTexture(uuid)*/;
-        cached_textures.set(uuid, texture);
-    }
-
-    return texture;
-}
-
-async function setTexture(div, uuid) {
-    var texture = await api.getTexture(uuid);
-    cached_textures.set(uuid, texture);
-
-    div.src = texture;
 }
 
 function getTransactionMessage(log) {

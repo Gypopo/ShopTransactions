@@ -3,9 +3,11 @@ import { MultipleTransaction } from "./transactions/MultipleTransaction.js";
 
 export class Logs {
 
+    lastResults; // Log results of previous actions
+
+    // Currently loaded data
     logs;
     dates;
-    lastResults; // Log results of previous actions
 
     // Active filters
     playerFilter = "all";
@@ -22,7 +24,7 @@ export class Logs {
     * @param {Array<Object>} logs
     * @param {Array<SimpleMonth>} dates
     */
-    init(logs, dates) {
+    constructor(logs, dates) {
         this.logs = logs;
         this.dates = dates;
     }
@@ -60,7 +62,7 @@ export class Logs {
     get() {
         return this.lastResults = this.logs;
     }
-
+    
     /**
      * @param {string} id
      * @return {Card}
@@ -142,28 +144,6 @@ export class Logs {
         arr.unshift("ALL");
 
         return new Set(arr);
-    }
-
-    /**
-     * @param {string} id
-     * @param {Card} card
-     */
-    add(id, card) {
-        this.cards.set(id, card);
-    }
-
-    /**
-     * @param {number} p
-     * @param {SearchResults} filter
-     * @return {Array<Object>}
-     */
-    getPage(p, filter) {
-        var logs = new Array();
-        var i = p * this.pageSize - this.pageSize;
-        while (logs.size < this.pageSize) {
-            logs.add(this.logs.get(i++));
-        }
-        return logs;
     }
 
     getSize() {
