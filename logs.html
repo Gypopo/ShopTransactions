@@ -21,6 +21,7 @@
             background-color: #333;
             padding: 12px;
             padding-bottom: 2%;
+            min-height: 100vh;
         }
 
         /*
@@ -102,7 +103,7 @@
             background-color: #ffffff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
-            border-radius: 5px;
+            border-radius: 10px;
         }
 
         .log-container {
@@ -311,137 +312,206 @@
             .logs-container {
                 padding: 5px;
             }
+
             .log-container,
             .time-container {
                 margin-right: 5px;
                 margin-left: 5px;
             }
+
             .log-content,
             .log-guide {
                 grid-template-columns: 25% 10% 0% 0% 40% 20%;
                 gap: 5px;
             }
+
             .hideable-filter {
                 overflow: hidden;
             }
+
             .more-button {
                 width: 40%;
             }
+        }
+
+        .footerLinks {
+            display: inline-grid;
+            grid-auto-flow: row;
+            grid-gap: 24px;
+            justify-items: center;
+            margin: auto;
+            list-style-type: none;
+            height: 100%;
+            grid-auto-rows: 100%;
+        }
+
+        @media (min-width: 500px) {
+            .footerLinks {
+                grid-auto-flow: column;
+            }
+        }
+
+        .footerLink {
+            color: white;
+            text-decoration: none;
+            box-shadow: inset 0 -1px 0 hsla(0, 0%, 100%, 0.4);
+        }
+
+        .footerLink:hover {
+            box-shadow: inset 0 -1.2em 0 hsla(0, 0%, 100%, 0.4);
+        }
+
+        .footerEle:last-child {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+        }
+
+        .footer {
+            display: flex;
+            height: 80px;
+            width: 100%;
+            background-color: #4a5050;
+            line-height: 5;
+            font-family: Menlo, monospace;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="nav-logo">
-                <img src="pics/Logo_GP5.0 no background.png" alt="..." height="64">
+    <div class="page">
+        <div class="header">
+            <div class="header-content">
+                <div class="nav-logo">
+                    <img src="pics/Logo_GP5.0 no background.png" alt="..." height="64">
+                </div>
+                <div class="nav-title">
+                    Logs
+                </div>
+                <ul class="nav-links">
+                    <li>
+                        <a class="nav-item" id="customHref" data-link="/stats">Stats</a>
+                    </li>
+                    <li>
+                        <a class="nav-item active" id="customHref" data-link="#">Logs</a>
+                    </li>
+                    <li>
+                        <a class="nav-item" href="https://discord.gpplugins.com/">Discord</a>
+                    </li>
+                    <li>
+                        <a class="nav-item" href="https://github.com/Gypopo">Github</a>
+                    </li>
+                </ul>
             </div>
-            <div class="nav-title">
-                Logs
+        </div>
+
+        <div class="main">
+            <div class="logs-container">
+                <div class="log-guide">
+                    <div class="log-guide-item">
+                        Player
+                        <select name="players" id="player-filter" style="width: 80px;"></select>
+                    </div>
+
+                    <div class="log-guide-item" style="display: flex;">
+                        <span style="margin-right: 10px;">Amount</span>
+                        <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
+                        <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
+                            <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
+                                title="Click to toggle slider" class="filter-toggler" data-filter-type="amount"></img>
+
+                            <div class="slider-container" id="amount-slider-container"
+                                style="display: none; margin-top: 25px;">
+                                <div id="amt-slider-value">Amount: 0 - 4096</div>
+                                <input type="range" id="amt-slider1" class="slider1" min="1" max="128" value="1"
+                                    style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
+                                <input type="range" id="amt-slider2" class="slider2" min="1" max="128" value="128">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="log-guide-item hideable-filter">
+                        Action
+                        <select name="actions" id="action-filter" style="width: 60px;">
+                            <option value="BUY/SELL">BUY/SELL</option>
+                            <option value="BUY">BUY</option>
+                            <option value="SELL">SELL</option>
+                        </select>
+                    </div>
+
+                    <div class="log-guide-item hideable-filter">
+                        Method
+                        <select name="methods" id="method-filter" style="width: 120px;">
+                            <option value="ALL">ALL</option>
+                            <optgroup label="BUY">
+                                <option value="QUICK_BUY">QUICK_BUY</option>
+                                <option value="BUY_SCREEN">BUY_SCREEN</option>
+                                <option value="BUY_STACKS_SCREEN">BUY_STACKS_SCREEN</option>
+                                <option value="SHOPSTAND_BUY_SCREEN">SHOPSTAND_BUY_SCREEN</option>
+                            </optgroup>
+                            <optgroup label="SELL">
+                                <option value="QUICK_SELL">QUICK_SELL</option>
+                                <option value="SELL_SCREEN">SELL_SCREEN</option>
+                                <option value="SELL_ALL_SCREEN">SELL_ALL_SCREEN</option>
+                                <option value="SELL_GUI_SCREEN">SELL_GUI_SCREEN</option>
+                                <option value="SELL_ALL_COMMAND">SELL_ALL_COMMAND</option>
+                                <option value="SHOPSTAND_SELL_SCREEN">SHOPSTAND_SELL_SCREEN</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="log-guide-item">
+                        Item(s)
+                        <select name="items" id="item-filter" style="width: 120px;"></select>
+                    </div>
+
+                    <div class="log-guide-item" style="display: flex;">
+                        <span style="margin-right: 10px;">Price(s)</span>
+                        <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
+                        <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
+                            <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
+                                title="Click to toggle filter" class="filter-toggler" data-filter-type="price"></img>
+
+                            <div class="slider-container" id="price-slider-container"
+                                style="display: none; margin-top: 25px;">
+                                <div id="currency-container" style="display: flex; margin-bottom: 10px;">
+                                    <a style="margin-right: 10px;">Currency:</a>
+                                    <select name="currencys" id="currency-filter" style="width: 40px;"></select>
+                                </div>
+                                <div id="price-container">
+                                    <div id="price-slider-value">Price range: 0 - 1T</div>
+                                    <input type="range" id="price-slider1" class="slider1" min="0" max="109" value="0"
+                                        style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
+                                    <input type="range" id="price-slider2" class="slider2" min="0" max="109"
+                                        value="109">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="log-count" id="log-count" style="text-align: center; margin: 10px 0px;">Showing <a
+                        style="color: rgb(0, 255, 0);">
+                        <stong>0<stong>
+                    </a> log(s)</div>
+                <div class="logs" id="logs"></div>
             </div>
-            <ul class="nav-links">
-                <li>
-                    <a class="nav-item" id="customHref" data-link="/stats">Stats</a>
+        </div>
+
+        <div class="footer">
+            <ul class="footerLinks">
+                <li class="footerEle">
+                    <a class="footerLink" href="https://www.spigotmc.org/resources/authors/gypopo.312524/">SpigotMC</a>
                 </li>
-                <li>
-                    <a class="nav-item active" id="customHref" data-link="#">Logs</a>
+                <li class="footerEle">
+                    <a class="footerLink" href="https://github.com/Gypopo/ShopTransactions">Github</a>
                 </li>
-                <li>
-                    <a class="nav-item" href="https://discord.gpplugins.com/">Discord</a>
+                <li class="footerEle">
+                    <a style="color: #fff;"> || &nbsp; © GPPlugins 2024 All rights reserved</a>
                 </li>
-                <li>
-                    <a class="nav-item" href="https://github.com/Gypopo">Github</a>
+                <li class="footerEle">
+                    <a class="footerLink" href="https://discord.gpplugins.com">Discord</a>
                 </li>
             </ul>
         </div>
-    </div>
-
-    <div class="main">
-        <div class="logs-container">
-            <div class="log-guide">
-                <div class="log-guide-item">
-                    Player
-                    <select name="players" id="player-filter" style="width: 80px;"></select>
-                </div>
-
-                <div class="log-guide-item" style="display: flex;">
-                    <span style="margin-right: 10px;">Amount</span>
-                    <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
-                    <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
-                        <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
-                            title="Click to toggle slider" class="filter-toggler" data-filter-type="amount"></img>
-
-                        <div class="slider-container" id="amount-slider-container"
-                            style="display: none; margin-top: 25px;">
-                            <div id="amt-slider-value">Amount: 0 - 4096</div>
-                            <input type="range" id="amt-slider1" class="slider1" min="1" max="128" value="1"
-                                style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
-                            <input type="range" id="amt-slider2" class="slider2" min="1" max="128" value="128">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="log-guide-item hideable-filter">
-                    Action
-                    <select name="actions" id="action-filter" style="width: 60px;">
-                        <option value="BUY/SELL">BUY/SELL</option>
-                        <option value="BUY">BUY</option>
-                        <option value="SELL">SELL</option>
-                    </select>
-                </div>
-
-                <div class="log-guide-item hideable-filter">
-                    Method
-                    <select name="methods" id="method-filter" style="width: 120px;">
-                        <option value="ALL">ALL</option>
-                        <optgroup label="BUY">
-                            <option value="QUICK_BUY">QUICK_BUY</option>
-                            <option value="BUY_SCREEN">BUY_SCREEN</option>
-                            <option value="BUY_STACKS_SCREEN">BUY_STACKS_SCREEN</option>
-                            <option value="SHOPSTAND_BUY_SCREEN">SHOPSTAND_BUY_SCREEN</option>
-                        </optgroup>
-                        <optgroup label="SELL">
-                            <option value="QUICK_SELL">QUICK_SELL</option>
-                            <option value="SELL_SCREEN">SELL_SCREEN</option>
-                            <option value="SELL_ALL_SCREEN">SELL_ALL_SCREEN</option>
-                            <option value="SELL_GUI_SCREEN">SELL_GUI_SCREEN</option>
-                            <option value="SELL_ALL_COMMAND">SELL_ALL_COMMAND</option>
-                            <option value="SHOPSTAND_SELL_SCREEN">SHOPSTAND_SELL_SCREEN</option>
-                        </optgroup>
-                    </select>
-                </div>
-
-                <div class="log-guide-item">
-                    Item(s)
-                    <select name="items" id="item-filter" style="width: 120px;"></select>
-                </div>
-
-                <div class="log-guide-item" style="display: flex;">
-                    <span style="margin-right: 10px;">Price(s)</span>
-                    <!-- <input type="text" id="amount-filter" placeholder="Filter by amount"></input> -->
-                    <div id="img-container" style="display: flex; flex-direction: column; align-items: center;">
-                        <img height="18px" width="18px" src="/pics/filter.svg" style="cursor: pointer;"
-                            title="Click to toggle filter" class="filter-toggler" data-filter-type="price"></img>
-
-                        <div class="slider-container" id="price-slider-container"
-                            style="display: none; margin-top: 25px;">
-                            <div id="currency-container" style="display: flex; margin-bottom: 10px;">
-                                <a style="margin-right: 10px;">Currency:</a>
-                                <select name="currencys" id="currency-filter" style="width: 40px;"></select>
-                            </div>
-                            <div id="price-container">
-                                <div id="price-slider-value">Price range: 0 - 1T</div>
-                                <input type="range" id="price-slider1" class="slider1" min="0" max="109" value="0"
-                                    style="background: linear-gradient(to right, #ccc 0%, blue 0%, blue 100%, #ccc 100%);">
-                                <input type="range" id="price-slider2" class="slider2" min="0" max="109" value="109">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="log-count" id="log-count" style="text-align: center; margin: 10px 0px;">Showing <a style="color: rgb(0, 255, 0);"><stong>0<stong></a> log(s)</div>
-            <div class="logs" id="logs"></div>
     </div>
     <script type="module" src="main.js"></script>
 </body>

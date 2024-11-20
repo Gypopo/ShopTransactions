@@ -55,7 +55,7 @@ async function completeLoading() {
     var loader = document.getElementById('loader')
     loader.remove();
 
-    var container = document.getElementById('container');
+    var container = document.getElementById('rankings-container');
     container.style.display = 'block';
 
     fillPage();

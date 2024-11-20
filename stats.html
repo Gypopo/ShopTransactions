@@ -90,24 +90,27 @@
 
         */
 
-        .container {
-            display: none;
-            width: 100%;
+        .content {
             height: 100%;
             max-width: 1200px;
             margin: auto;
             padding: 20px;
+            padding-top: 30px;
+            background-color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            min-width: 95%;
+            min-height: 95%;
             background-color: #ffffff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 10px;
         }
 
         .rankings {
-            width: 100%;
-            height: 100%;
-            background-color: #e8e8e8;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 10px;
+            display: none;
         }
 
         .top-items {
@@ -330,7 +333,6 @@
 
         .footer {
             display: flex;
-            margin-top: 5%;
             height: 80px;
             width: 100%;
             background-color: #4a5050;
@@ -367,135 +369,136 @@
         </nav>
     </div>
 
-    <div class="loader-frame" id="loader"></div>
-
-    <div class="container" id="container">
-        <div class="rankings">
-            <div class="ranking-section">Log stats</div>
-            <div class="seperator">
-                <hr style="border: 2px solid black; background-color: black;">
-            </div>
-            <div class="log-stats">
-                <div class="ranking-item total-transactions">
-                    <div class="ranking-title">Total transactions</div>
-                    <div class="ranking-head" id="total-transactions">
-                        38
-                    </div>
+    <div class="content">
+        <div class="container">
+            <div class="loader-frame" id="loader"></div>
+            <div class="rankings" id="rankings-container">
+                <div class="ranking-section">Log stats</div>
+                <div class="seperator">
+                    <hr style="border: 2px solid black; background-color: black;">
                 </div>
-
-                <div class="cashflow-container">
-                    <div class="ranking-item total-cashflow-in">
-                        <div class="ranking-title">Total Cashflow Spend</div>
-                        <div class="ranking-head" id="total-cashflow-in">
-                            $0.00
+                <div class="log-stats">
+                    <div class="ranking-item total-transactions">
+                        <div class="ranking-title">Total transactions</div>
+                        <div class="ranking-head" id="total-transactions">
+                            38
                         </div>
                     </div>
 
-                    <div class="ranking-item total-cashflow-out">
-                        <div class="ranking-title">Total Cashflow Out</div>
-                        <div class="ranking-head" id="total-cashflow-out">
-                            $0.00
+                    <div class="cashflow-container">
+                        <div class="ranking-item total-cashflow-in">
+                            <div class="ranking-title">Total Cashflow Spend</div>
+                            <div class="ranking-head" id="total-cashflow-in">
+                                $0.00
+                            </div>
+                        </div>
+
+                        <div class="ranking-item total-cashflow-out">
+                            <div class="ranking-title">Total Cashflow Out</div>
+                            <div class="ranking-head" id="total-cashflow-out">
+                                $0.00
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="ranking-section">Top Items</div>
-            <div class="seperator">
-                <hr style="border: 2px solid black; background-color: black;">
-            </div>
-            <div class="top-items">
-                <div class="ranking-item top-bought-items-month">
-                    <div class="ranking-title">Top bought items(last 30 days)</div>
-                    <div class="ranking-table" id="top-bought-items-month">
-                        <ul>
-                        </ul>
-                    </div>
+                <div class="ranking-section">Top Items</div>
+                <div class="seperator">
+                    <hr style="border: 2px solid black; background-color: black;">
                 </div>
-                <div class="ranking-item top-bought-items-week">
-                    <div class="ranking-title">Top bought items(last 7 days)</div>
-                    <div class="ranking-table" id="top-bought-items-week">
-                        <ul>
-                        </ul>
+                <div class="top-items">
+                    <div class="ranking-item top-bought-items-month">
+                        <div class="ranking-title">Top bought items(last 30 days)</div>
+                        <div class="ranking-table" id="top-bought-items-month">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="ranking-item top-bought-items-day">
-                    <div class="ranking-title">Top bought items(today)</div>
-                    <div class="ranking-table" id="top-bought-items-day">
-                        <ul>
-                        </ul>
+                    <div class="ranking-item top-bought-items-week">
+                        <div class="ranking-title">Top bought items(last 7 days)</div>
+                        <div class="ranking-table" id="top-bought-items-week">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                    <div class="ranking-item top-bought-items-day">
+                        <div class="ranking-title">Top bought items(today)</div>
+                        <div class="ranking-table" id="top-bought-items-day">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
 
-                <div class="ranking-item top-sold-items-month">
-                    <div class="ranking-title">Top sold items(last 30 days)</div>
-                    <div class="ranking-table" id="top-sold-items-month">
-                        <ul>
-                        </ul>
+                    <div class="ranking-item top-sold-items-month">
+                        <div class="ranking-title">Top sold items(last 30 days)</div>
+                        <div class="ranking-table" id="top-sold-items-month">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="ranking-item top-sold-items-week">
-                    <div class="ranking-title">Top sold items(last 7 days)</div>
-                    <div class="ranking-table" id="top-sold-items-week">
-                        <ul>
-                        </ul>
+                    <div class="ranking-item top-sold-items-week">
+                        <div class="ranking-title">Top sold items(last 7 days)</div>
+                        <div class="ranking-table" id="top-sold-items-week">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="ranking-item top-sold-items-day">
-                    <div class="ranking-title">Top sold items(today)</div>
-                    <div class="ranking-table" id="top-sold-items-day">
-                        <ul>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="ranking-section">Top players</div>
-            <div class="seperator">
-                <hr style="border: 2px solid black; background-color: black;">
-            </div>
-            <div class="top-players">
-                <div class="ranking-item top-players-purchased-month">
-                    <div class="ranking-title">Top players bought items(last month)</div>
-                    <div class="ranking-table" id="top-players-purchased-month">
-                        <ul>
-                        </ul>
-                    </div>
-                </div>
-                <div class="ranking-item top-players-purchased-week">
-                    <div class="ranking-title">Top players bought items(last week)</div>
-                    <div class="ranking-table" id="top-players-purchased-week">
-                        <ul>
-                        </ul>
-                    </div>
-                </div>
-                <div class="ranking-item top-players-purchased-day">
-                    <div class="ranking-title">Top players bought items(last day)</div>
-                    <div class="ranking-table" id="top-players-purchased-day">
-                        <ul>
-                        </ul>
+                    <div class="ranking-item top-sold-items-day">
+                        <div class="ranking-title">Top sold items(today)</div>
+                        <div class="ranking-table" id="top-sold-items-day">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
-                <div class="ranking-item top-players-sold-month">
-                    <div class="ranking-title">Top players sold items(last month)</div>
-                    <div class="ranking-table" id="top-players-sold-month">
-                        <ul>
-                        </ul>
-                    </div>
+                <div class="ranking-section">Top players</div>
+                <div class="seperator">
+                    <hr style="border: 2px solid black; background-color: black;">
                 </div>
-                <div class="ranking-item top-players-sold-week">
-                    <div class="ranking-title">Top players sold items(last week)</div>
-                    <div class="ranking-table" id="top-players-sold-week">
-                        <ul>
-                        </ul>
+                <div class="top-players">
+                    <div class="ranking-item top-players-purchased-month">
+                        <div class="ranking-title">Top players bought items(last month)</div>
+                        <div class="ranking-table" id="top-players-purchased-month">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="ranking-item top-players-sold-day">
-                    <div class="ranking-title">Top players sold items(last day)</div>
-                    <div class="ranking-table" id="top-players-sold-day">
-                        <ul>
-                        </ul>
+                    <div class="ranking-item top-players-purchased-week">
+                        <div class="ranking-title">Top players bought items(last week)</div>
+                        <div class="ranking-table" id="top-players-purchased-week">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ranking-item top-players-purchased-day">
+                        <div class="ranking-title">Top players bought items(last day)</div>
+                        <div class="ranking-table" id="top-players-purchased-day">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="ranking-item top-players-sold-month">
+                        <div class="ranking-title">Top players sold items(last month)</div>
+                        <div class="ranking-table" id="top-players-sold-month">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ranking-item top-players-sold-week">
+                        <div class="ranking-title">Top players sold items(last week)</div>
+                        <div class="ranking-table" id="top-players-sold-week">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ranking-item top-players-sold-day">
+                        <div class="ranking-title">Top players sold items(last day)</div>
+                        <div class="ranking-table" id="top-players-sold-day">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -508,7 +511,7 @@
                 <a class="footerLink" href="https://www.spigotmc.org/resources/authors/gypopo.312524/">SpigotMC</a>
             </li>
             <li class="footerEle">
-                <a class="footerLink" href="https://github.com/Gypopo/GPFileShareWebsite">Github</a>
+                <a class="footerLink" href="https://github.com/Gypopo/ShopTransactions">Github</a>
             </li>
             <li class="footerEle">
                 <a style="color: #fff;"> || &nbsp; © GPPlugins 2024 All rights reserved</a>
