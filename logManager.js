@@ -47,15 +47,15 @@ export class LogManager {
         var arr = [];
         const oneDay = 86400000;
         var today = new Date();
-        today.setHours(12, 0, 0, 0);
-        var prevDate = today.getTime() - this.timeOffset;
+        today.setHours(24, 0, 0, 0);
+        var prevDate = today.getTime();
         var fakePageSize = this.pageSize; // Make a fake page size which can increase if we didn't reach the amount of logs per day
     
         var i = 0;
         var title = false;
         while (i < fakePageSize && this.lastIndex < logs.length) {
             var log = logs.at(this.lastIndex);
-            var date = log.date - this.timeOffset;
+            var date = log.date;
     
             // Check if the log is from today or a previous day
             if (date <= prevDate) {
@@ -64,11 +64,11 @@ export class LogManager {
                         if (i >= this.pageSize)
                             break;
 
-                        var formatted = this.formatDate(today);
+                        var formatted = this.formatDate(new Date(log.date));
                         var container = document.createElement('div');
                         container.className = 'time-container';
     
-                        container.innerHTML = formatted + '<hr style="border: 2px solid black; background-color: black;">';
+                        container.innerHTML = formatted + '<div class="seperator"><hr style="border: 2px solid black; background-color: black;"></div>';
                         arr.push(container);
     
                         title = true;
@@ -81,14 +81,14 @@ export class LogManager {
                 } else {
                     const dayDiff = Math.floor((prevDate - date) / oneDay); // The amount of full days which passed without transactions
                     today.setDate(today.getDate() - dayDiff);
-                    prevDate = today.getTime() - this.timeOffset;
+                    prevDate = today.getTime();
                     title = false;
     
                     if (!title) {
                         if (i >= this.pageSize)
                             break;
 
-                        var formatted = this.formatDate(today);
+                        var formatted = this.formatDate(new Date(log.date));
                         var container = document.createElement('div');
                         container.className = 'time-container';
     
