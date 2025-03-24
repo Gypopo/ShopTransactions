@@ -383,11 +383,11 @@ function loadFilters() {
 }
 
 function getTransactionMessage(log) {
-    var transactionMSG;
+    var transactionMSG = '[' + new Date(log.date).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + '] - ';
     if (log instanceof MultipleTransaction) {
-        transactionMSG = log.player.name + ' ' + TransactionMode[log.action] + ' ' + log.getItems() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
+        transactionMSG += log.player.name + ' ' + TransactionMode[log.action] + ' ' + log.getItems() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
     } else if (log instanceof SingleTransaction) {
-        transactionMSG = log.player.name + ' ' + TransactionMode[log.action] + ' ' + log.amount + ' x ' + log.getItemsWithoutAmount() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
+        transactionMSG += log.player.name + ' ' + TransactionMode[log.action] + ' ' + log.amount + ' x ' + log.getItemsWithoutAmount() + ' for ' + log.getPrices() + ' with the ' + TransactionType[log.type];
     }
 
     return transactionMSG;
